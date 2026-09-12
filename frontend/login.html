@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShareSync - Login</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+
+<body>
+    <main class="login-page">
+        <div class="login-box">
+            <div class="logo">
+                <span class="ribbon-mark" aria-hidden="true"></span>
+            </div>
+
+
+            <h1>ShareSync</h1>
+            <p class="welcome">
+                Welcome back
+            </p>   
+
+
+            <form id="loginForm">
+                <div class="input-group floating-group">
+                    <input
+                        type="email"
+                        id="email"
+                        placeholder=" "
+                        required
+                    >
+                    <label for="email">
+                         Email
+                    </label>
+                </div>
+
+
+                <div class="input-group password-group floating-group">
+                    <input
+                        type="password"
+                        id="password"
+                        placeholder=" "
+                        required
+                    >
+                    <label for="password">
+                        Password
+                    </label>
+                    <button
+                        type="button"
+                        class="password-toggle"
+                        id="passwordToggle"
+                        aria-label="Show password"
+                        title="Show password"
+                    >
+                        &#128065;
+                    </button>
+                </div>
+                <div class="forgot">
+                    <a href="#">
+                        Forgot password?
+                    </a>
+                </div>
+
+                
+                <button
+                    type="submit"
+                    class="login-btn"
+                >
+                    Sign In
+                </button>
+            </form>
+            <div class="divider">
+                <span>OR</span>
+            </div>
+            <p class="create-account-link">
+                Not a member?
+                <a href="#">
+                Create Account
+                </a>
+            </p>
+
+
+            <p class="admin-link">
+                Are you an admin?
+                <a href="#">
+                    Admin Login
+                </a>
+            </p>
+        </div>
+    </main>
+
+
+    <footer class="footer">
+
+        <p>
+            ShareSync · College Resource Sharing
+        </p>
+
+    </footer>
+    <script src="login.js"></script>
+
+</body>
+
+</html>
