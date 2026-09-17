@@ -19,6 +19,6 @@ loginForm.addEventListener("submit", function (event){
         alert("Enter email and password.");
         return;
      }
-     alert("Login button clicked ")
+     alert("Welcome User!!")
 });
 
