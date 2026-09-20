@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShareSync - Create Account</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <main class="login-page">
+        <div class="login-box">
+            <div class="logo">
+                <span class="ribbon-mark" aria-hidden="true"></span>
+            </div>
+
+            <h1>ShareSync</h1>
+            <p class="welcome">
+                Create your ShareSync account
+            </p>
+
+            <form id="registerForm">
+                <div class="input-group floating-group">
+                    <input type="text" id="name" placeholder=" " required>
+                    <label for="name">Name</label>
+                </div>
+
+                <div class="input-group floating-group">
+                    <input type="text" id="collegeId" placeholder=" " required>
+                    <label for="collegeId">College ID</label>
+                </div>
+
+                <div class="input-group floating-group">
+                    <input type="email" id="email" placeholder=" " required>
+                    <label for="email">Email</label>
+                </div>
+
+                <div class="input-group password-group floating-group">
+                    <input type="password" id="password" placeholder=" " required>
+                    <label for="password">Password</label>
+                    <button
+                        type="button"
+                        class="password-toggle"
+                        id="passwordToggle"
+                        aria-label="Show password"
+                        title="Show password"
+                    >
+                        &#128065;
+                    </button>
+                </div>
+
+                <button type="submit" class="login-btn">Create Account</button>
+            </form>
+
+            <p class="create-account-link">
+                Already have an account?
+                <a href="login.html">Login</a>
+            </p>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>
+            ShareSync · College Resource Sharing
+        </p>
+    </footer>
+
+    <script src="login.js"></script>
+</body>
+
+</html>
