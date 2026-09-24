@@ -13,7 +13,7 @@ def get_db_connection():
     return mysql.connector.connect(
         host="localhost",
         user="root",
-        password="@Ifw._.whit3",
+        password="paste_password_here",
         database="sharesync"
     )
 
