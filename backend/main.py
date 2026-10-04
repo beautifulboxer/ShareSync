@@ -13,7 +13,7 @@ def get_db_connection():
     return mysql.connector.connect(
         host="localhost",
         user="root",
-        password="YOUR_MYSQL_PASSWORD",
+        password="paste_password_here",
         database="sharesync"
     )
 
@@ -169,4 +169,4 @@ def register():
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8000, debug=True)
+    app.run(debug=True)
