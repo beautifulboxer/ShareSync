@@ -27,7 +27,7 @@ VALUES
     999,
     'ShareSync Admin',
     'admin@sharesync.com',
-    '32768:8:1$HwNRpwfF9PTm9cjH$101668a29278f48d1016305929c4c6f9491e33881b994f419d874a5d555eac988bb61ee0e4d925564b81a5e641a5fdea7d529e8e5db9f365a16cd72e6275b585
+    'scrypt:32768:8:1$sAaMO4qEedB3eZ0C$2787198bacbceababec8b648091d85cfe2cfc6d7dfd20a4a34bc1a88bbc08e9ffab99ea61f67baa7aa64639eee0eb7a843678c57d12469276a8e7e4814e03fa0'
     'ADMIN',
     'VERIFIED'
 );
