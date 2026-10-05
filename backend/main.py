@@ -171,10 +171,10 @@ def register():
             cursor.close()
         if connection:
             connection.close()
-
+            
 @app.route("/admin")
 def admin_login_page():
-    return render_tempelate_("admin-login.html")
+    return render_template("admin-login.html")
 
 if __name__ == "__main__":
     app.run( host="0.0.0.0",port=8000,debug=True)
