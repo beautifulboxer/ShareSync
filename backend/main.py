@@ -176,5 +176,85 @@ def register():
 def admin_login_page():
     return render_template("admin-login.html")
 
+@app.route("/admin-login", methods=["POST"])
+def admin_login():
+    data = request.get_json()
+
+    email = data.get("email", "").strip()
+    password = data.get("password", "")
+
+    if not email or not password:
+        return jsonify({
+            "success": False,
+            "message": "Admin email and password are required."
+        }), 400
+
+    connection = None
+    cursor = None
+
+    try:
+        connection = get_db_connection()
+        cursor = connection.cursor(dictionary=True)
+
+        query = """
+            SELECT student_id, student_name, email, password_hash,
+                   role, verification_status
+            FROM students
+            WHERE email = %s
+        """
+
+        cursor.execute(query, (email,))
+        admin = cursor.fetchone()
+
+        if admin is None:
+            return jsonify({
+                "success": False,
+                "message": "Invalid admin email or password."
+            }), 401
+
+        if not check_password_hash(admin["password_hash"], password):
+            return jsonify({
+                "success": False,
+                "message": "Invalid admin email or password."
+            }), 401
+
+        if admin["role"] != "ADMIN":
+            return jsonify({
+                "success": False,
+                "message": "You are not authorized as an admin."
+            }), 403
+
+        if admin["verification_status"] != "VERIFIED":
+            return jsonify({
+                "success": False,
+                "message": "Admin account is not verified."
+            }), 403
+
+        return jsonify({
+            "success": True,
+            "message": "Admin login successful.",
+            "student_name": admin["student_name"],
+            "role": admin["role"]
+        })
+
+    except mysql.connector.Error as error:
+        print("Database error:", error)
+
+        return jsonify({
+            "success": False,
+            "message": "Database error occurred."
+        }), 500
+
+    finally:
+        if cursor:
+            cursor.close()
+
+        if connection:
+            connection.close()
+
+
 if __name__ == "__main__":
+
     app.run( host="0.0.0.0",port=8000,debug=True)
+
+ 
