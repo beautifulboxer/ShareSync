@@ -1,20 +1,25 @@
 from flask import Flask, render_template, request, jsonify
 import mysql.connector
 from werkzeug.security import generate_password_hash, check_password_hash
+from dotenv import load_dotenv
+import os
+load_dotenv()
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 app = Flask(
     __name__,
-    template_folder="../frontend",
-    static_folder="../frontend",
+    template_folder=os.path.join(BASE_DIR, "frontend"),
+    static_folder=os.path.join(BASE_DIR, "frontend"),
     static_url_path="/static"
 )
 
 def get_db_connection():
     return mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password="paste_password_here",
-        database="sharesync"
+        host=os.getenv("MYSQL_HOST"),
+        user=os.getenv("MYSQL_USER"),
+        password=os.getenv("MYSQL_PASSWORD"),
+        database=os.getenv("MYSQL_DATABASE")
     )
 
 @app.route("/")
@@ -167,6 +172,9 @@ def register():
         if connection:
             connection.close()
 
+@app.route("/admin")
+def admin_login_page():
+    return render_tempelate_("admin-login.html")
 
 if __name__ == "__main__":
     app.run( host="0.0.0.0",port=8000,debug=True)
