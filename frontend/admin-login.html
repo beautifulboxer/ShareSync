@@ -1,19 +1,19 @@
 <!DOCTYPE html>
-<html lang="eng">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device,initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>ShareSync - Admin Login</title>
-    <link rel="stylesheet" herf="style.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 
 <body>
     <main class="login-page">
         <div class="login-box">
             <div class="logo">
-                <span class="ribbon-mark"aria-hidden="true"></span>
+                <span class="ribbon-mark" aria-hidden="true"></span>
             </div>
 
 
@@ -30,9 +30,9 @@
                         placeholder=" "
                         required
                     >
-                    <lable for="adminEmail">
+                    <label for="adminEmail">
                         Admin Email
-                    </lable>
+                    </label>
                 </div>
 
 
@@ -43,27 +43,30 @@
                         placeholder=" "
                         required
                     >
-                    <lable for ="adminPassword">
+                    <label for="adminPassword">
                         Password
-                    </lable>
+                    </label>
 
                     <button
                         type="button"
                         class="password-toggle"
                         id="adminPasswordToggle"
-                        aria-lable="Show password"
+                        aria-label="Show password"
                         title="Show password"
                         >
                            &#128065;
                     </button>       
-                    </div>
+                </div>
 
-                    <button type="submit" class="login-btn">
+                <button type="submit" class="login-btn">
                     Admin Sign In
                 </button>
-                
             </form>
         </div>
-
     </main>
+
+    <footer class="footer">
+        <p>ShareSync · College Resource Sharing</p>
+    </footer>
 </body>
+</html>
