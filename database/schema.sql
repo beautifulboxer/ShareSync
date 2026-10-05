@@ -13,6 +13,25 @@ use sharesync;
     -> created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     -> )ENGINE =InnoDB;
 
+INSERT INTO students
+(
+    student_id,
+    student_name,
+    email,
+    password_hash,
+    role,
+    verification_status
+)
+VALUES
+(
+    999,
+    'ShareSync Admin',
+    'admin@sharesync.com',
+    '32768:8:1$HwNRpwfF9PTm9cjH$101668a29278f48d1016305929c4c6f9491e33881b994f419d874a5d555eac988bb61ee0e4d925564b81a5e641a5fdea7d529e8e5db9f365a16cd72e6275b585
+    'ADMIN',
+    'VERIFIED'
+);
+
 create table borrow_requests(
     request_id INT AUTO_INCREMENT PRIMARY KEY,
     -> student_id INT NOT NULL,
