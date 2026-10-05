@@ -1,6 +1,11 @@
 const loginForm = document.getElementById("loginForm");
+const adminLoginForm=document.getElementById("adminLoginForm");
+
+const adminPassword=document.getElementById("adminPassword");
 const passwordInput = document.getElementById("password");
+
 const passwordToggle = document.getElementById("passwordToggle");
+const adminPasswordToggle=document.getElementById("adminPasswordToggle");
 
 if (passwordToggle && passwordInput) {
     passwordToggle.addEventListener("click", function () {
@@ -57,9 +62,61 @@ if (loginForm) {
     });
 }
 
+if (adminPasswordToggle && adminPassword) {
+    adminPasswordToggle.addEventListener("click", function () {
+        const isVisible = adminPassword.type === "text";
+        adminPassword.type = isVisible ? "password" : "text";
+        adminPasswordToggle.setAttribute(
+            "aria-label",
+            isVisible ? "Show password" : "Hide password"
+        );
+        adminPasswordToggle.setAttribute(
+            "title",
+            isVisible ? "Show password" : "Hide password"
+        );
+        adminPasswordToggle.classList.toggle(
+            "is-visible",
+            !isVisible
+        );
+    });
+}
+
+
+if (adminLoginForm) {
+    adminLoginForm.addEventListener("submit", async function (event) {
+        event.preventDefault();
+        const email = document.getElementById("adminEmail").value.trim();
+        const password = adminPassword.value;
+        if (email === "" || password === "") {
+            alert("Enter admin email and password.");
+            return;
+        }
+        try {
+            const response = await fetch("/admin-login", {
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    email: email,
+                    password: password
+                })
+            });
+            const data = await response.json();
+            alert(data.message);
+            if (data.success) {
+                window.location.href = "/admin-dashboard";
+            }
+        } catch (error) {
+            console.error(error);
+            alert("Unable to connect to the server.");
+        }
+    });
+}
+
 
 const registerForm = document.getElementById("registerForm");
-
 if (registerForm) {
     registerForm.addEventListener("submit", async function (event) {
         event.preventDefault();
