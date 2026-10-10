@@ -275,7 +275,12 @@ def admin_dashboard():
         if connection:
             connection.close()
 
-
+@app.route('/admin-student-history')
+def admin_student_history():
+    if 'admin_id' not in session:
+        return redirect('/admin')
+    if session.get('admin_role') != 'ADMIN':
+        return redirect('/admin')*
 
 
 if __name__ == "__main__":
