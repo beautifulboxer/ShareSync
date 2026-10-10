@@ -281,6 +281,28 @@ def admin_student_history():
         return redirect('/admin')
     if session.get('admin_role') != 'ADMIN':
         return redirect('/admin')*
+    connection = None
+    cursor = None
+    try:
+        connection = get_db_connection()
+        cursor = get_db_cursor(connection)
+        cursor.execute('''
+            SELECT student_id, student_name, email, verification_status, created_at, created_at AS updated_at
+            FROM students
+            WHERE role = 'STUDENT'
+            ORDER BY created_at DESC
+        ''')
+        student_history = cursor.fetchall()
+        return render_template('admin-student-history.html', students=student_history)
+    except Exception as error:
+        print('Student history error:', error)
+        return 'Database error occurred.', 500
+    finally:
+        if cursor:
+            cursor.close()
+        if connection:
+            connection.close()
+
 
 
 if __name__ == "__main__":
