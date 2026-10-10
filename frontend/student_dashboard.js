@@ -1,8 +1,8 @@
-const borrowRequestBtn = document.getElementById("borrowRequestBtn");
+const borrowRequestBtn = document. getElementById("borrowRequestBtn");
 const activityBtn = document.getElementById("activityBtn");
-const refreshDashboardBtn = document.getElementById("refreshDashboardBtn");
+const refreshDashboardBtn = document. getElementById("refreshDashboardBtn");
 const studentNotice = document.getElementById("studentNotice");
-document.getElementById("borrowDueDate").min = localDateString(new Date());
+document.getElementById ("borrowDueDate").min = localDateString(new Date());
 const dashboardPanels = [
     document.getElementById("borrowRequestPanel"),
     document.getElementById("activityPanel")
@@ -244,7 +244,7 @@ document.querySelectorAll("[data-close-panel]").forEach((button) => {
 
 document.getElementById ("borrowRequestForm").addEventListener("submit", (event) => {
     event.preventDefault();
-    submitRequest (event.currentTarget);
+    submitRequest(event.currentTarget);
 });
 
 loadDashboard();
