@@ -131,7 +131,7 @@ def login():
         if connection:
             connection.close()
 
-            
+
 @app.route('/register', methods=['POST'])
 def register():
     data = request.get_json(silent=True) or {}
@@ -139,7 +139,17 @@ def register():
     college_id = str(data.get('collegeId', '')).strip()
     email = str(data.get('email', '')).strip()
     password = str(data.get('password', ''))
+    if not name or not college_id or not email or not password:
+        return jsonify({'success': False, 'message': 'Please fill all fields.'}), 400
 
+    try:
+        student_id = int(college_id)
+    except ValueError:
+        return jsonify({'success': False, 'message': 'College ID must be a number.'}), 400
+
+    password_hash = generate_password_hash(password)
+    connection = None
+    cursor = None
 
  
 @app.route("/admin")
