@@ -204,16 +204,16 @@ async function loadDashboard() {
     }
 }
 
-async function submitRequest(form) {
+async function submitRequest (form) {
     const values = Object.fromEntries(new FormData(form).entries());
-    const submitButton = form.querySelector('button[type="submit"]');
+    const submitButton = form.querySelector ('button[type="submit"]');
     submitButton.disabled = true;
     try {
         const result = await apiRequest("/api/student-dashboard/requests", {
             method: "POST",
             body: JSON.stringify(values)
         });
-        showNotice(result.message);
+        showNotice (result.message);
         form.reset();
         form.closest(".student-panel").hidden = true;
         borrowRequestBtn.setAttribute("aria-expanded", "false");
