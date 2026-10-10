@@ -1,9 +1,60 @@
+<<<<<<< HEAD
 ﻿from flask import Flask, render_template, request, jsonify, session, redirect
+=======
+from flask import Flask, render_template, request, jsonify
+import mysql.connector
+from werkzeug.security  import  generate_password_hash,  check_password_hash
+from dotenv import load_dotenv
+import os
+load_dotenv()
+from student_dash import student_dashboard_bp
+>>>>>>> be3c2e7209daeccc79adf670c2836d305d51f965
 
 from datetime import date, datetime
 from threading import Lock
 
 
+<<<<<<< HEAD
+=======
+app.secret_key = os.getenv('FLASK_SECRET_KEY') or 'share-sync-dev-secret'
+student_request_lock = Lock()
+
+
+@app.before_request
+def check_authentication():
+    allowed_routes = {
+        'home',
+        'login','register_page','register',
+        'admin_login_page',
+        'admin_login','student_logout', 'admin_logout'
+    }
+    if request.endpoint in allowed_routes:
+        return
+    if request.path.startswith('/static/'):
+        return
+    if request.path.startswith('/api/student-dashboard'):
+        return
+
+    if 'student_id' not in session and 'admin_id' not in session:
+        return redirect('/')
+    if 'student_id' in session and request.path.startswith('/admin-dashboard'):
+        return redirect('/student-dashboard')
+    if 'admin_id' in session and request.path.startswith('/student-dashboard'):
+        return redirect('/admin-dashboard')
+
+
+app.register_blueprint(student_dashboard_bp)
+
+
+
+def get_db_connection():
+    return mysql.connector.connect(
+        host=os.getenv("MYSQL_HOST"),
+        user=os.getenv("MYSQL_USER"),
+        password=os.getenv("MYSQL_PASSWORD"),
+        database=os.getenv("MYSQL_DATABASE")
+    )
+>>>>>>> be3c2e7209daeccc79adf670c2836d305d51f965
 
 def get_db_cursor(connection):
     return connection.cursor(dictionary=True)
@@ -250,6 +301,7 @@ def student_dashboard_data():
             connection.close()
 
 
+<<<<<<< HEAD
 @app.route('/api/student-dashboard/requests', methods=['POST'])
 def create_student_resource_request():
     if not is_student_session():
@@ -733,14 +785,32 @@ def admin_review_student():
         return jsonify({'success': False, 'message': 'Invalid action.'}), 400
 
     new_status = 'VERIFIED' if action == 'approve' else 'REJECTED'
+=======
+@app.route('/register', methods=['POST'])
+def register():
+    data = request.get_json(silent=True) or {}
+    name = str(data.get('name', '')).strip()
+    college_id = str(data.get('collegeId', '')).strip()
+    email = str(data.get('email', '')).strip()
+    password = str(data.get('password', ''))
+    if not name or not college_id or not email or not password:
+        return jsonify({'success': False, 'message': 'Please fill all fields.'}), 400
+
+    try:
+        student_id = int(college_id)
+    except ValueError:
+        return jsonify({'success': False, 'message': 'College ID must be a number.'}), 400
+
+    password_hash = generate_password_hash(password)
+>>>>>>> be3c2e7209daeccc79adf670c2836d305d51f965
     connection = None
     cursor = None
-
     try:
         connection = get_db_connection()
         cursor = connection.cursor()
         cursor.execute(
             '''
+<<<<<<< HEAD
             UPDATE students
             SET verification_status = %s
             WHERE student_id = %s AND role = 'STUDENT' AND verification_status = 'PENDING'
@@ -762,11 +832,166 @@ def admin_review_student():
             connection.rollback()
         return jsonify({'success': False, 'message': 'Database error occurred.'}), 500
     
+=======
+            INSERT INTO students
+            (student_id, student_name, email, password_hash, role, verification_status)
+            VALUES (%s, %s, %s, %s, 'STUDENT', 'PENDING')
+            ''',
+            (student_id, name, email, password_hash)
+        )
+        connection.commit()
+        return jsonify({'success': True, 'message': "Registered successfully! Wait for Admin's approval."})
+    except mysql.connector.IntegrityError:
+        return jsonify({'success': False, 'message': 'College ID or email already exists.'}), 409
+    except Exception as error:
+        print('Register error:', error)
+        return jsonify({'success': False, 'message': 'Database error occurred.'}), 500
+>>>>>>> be3c2e7209daeccc79adf670c2836d305d51f965
+    finally:
+        if cursor:
+            cursor.close()
+        if connection:
+            connection.close()
+<<<<<<< HEAD
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=8000, debug=True)
+=======
+
+
+@app.route("/admin")
+def admin_login_page():
+    return render_template("admin-login.html")
+
+@app.route('/admin-login', methods=['POST'])
+def admin_login():
+    data = request.get_json(silent=True) or {}
+    email = str(data.get('email', '')).strip()
+    password = str(data.get('password', ''))
+
+    if not email or not password:
+        return jsonify({'success': False, 'message': 'Admin email and password are required.'}), 400
+
+    connection = None
+    cursor = None
+
+    try:
+        connection = get_db_connection()
+        cursor = get_db_cursor(connection)
+
+        cursor.execute('''
+            SELECT student_id, student_name, email, password_hash, role, verification_status
+            FROM students
+            WHERE email = %s
+        ''', (email,))
+        admin = cursor.fetchone()
+
+        if admin is None:
+            return  jsonify({'success': False, 'message': 'Invalid admin email or password.'}), 401
+
+        if not check_password_hash(admin['password_hash'], password):
+            return  jsonify({'success': False, 'message': 'Invalid admin email or password.'}), 401
+
+        if admin['role'] != 'ADMIN':
+            return  jsonify({'success': False, 'message': 'You are not authorized as an admin.'}), 403
+
+        if admin['verification_status'] != 'VERIFIED':
+            return  jsonify({'success': False, 'message': 'Admin account is not verified.'}), 403
+
+        session.clear()
+        session['admin_id'] = admin['student_id']
+        session['admin_role'] = admin['role']
+
+        return jsonify({
+            'success': True,
+            'message': 'Admin login successful.',
+            'student_name': admin['student_name'],
+            'role': admin['role']
+        })
+    except Exception as error:
+        print('Admin login error:', error)
+        return jsonify({'success': False, 'message': 'Database error occurred.'}), 500
     finally:
         if cursor:
             cursor.close()
         if connection:
             connection.close()
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8000, debug=True)
+@app.route('/student-logout')
+def student_logout():
+    session.clear()
+    return redirect('/')
+
+
+@app.route('/admin-logout')
+def admin_logout():
+    session.clear()
+    return redirect('/admin')
+
+
+
+@app.route('/admin-dashboard')
+def admin_dashboard():
+    if 'admin_id' not in session:
+        return redirect('/admin')
+    if session.get('admin_role') != 'ADMIN':
+        return redirect('/admin')
+
+    connection = None
+    cursor = None
+    try:
+        connection = get_db_connection()
+        cursor = get_db_cursor(connection)
+        cursor.execute('''
+            SELECT student_id, student_name, email, created_at
+            FROM students
+            WHERE role = 'STUDENT' AND verification_status = 'PENDING'
+            ORDER BY created_at DESC
+        ''')
+        pending_students = cursor.fetchall()
+        return render_template('admin-dashboard.html', students=pending_students)
+    except Exception as error:
+        print('Admin dashboard error:', error)
+        return 'Database error occurred.', 500
+    finally:
+        if cursor:
+            cursor.close()
+        if connection:
+            connection.close()
+
+@app.route('/admin-student-history')
+def admin_student_history():
+    if 'admin_id' not in session:
+        return redirect('/admin')
+    if session.get('admin_role') != 'ADMIN':
+        return redirect('/admin')*
+    connection = None
+    cursor = None
+    try:
+        connection = get_db_connection()
+        cursor = get_db_cursor(connection)
+        cursor.execute('''
+            SELECT student_id, student_name, email, verification_status, created_at, created_at AS updated_at
+            FROM students
+            WHERE role = 'STUDENT'
+            ORDER BY created_at DESC
+        ''')
+        student_history = cursor.fetchall()
+        return render_template('admin-student-history.html', students=student_history)
+    except Exception as error:
+        print('Student history error:', error)
+        return 'Database error occurred.', 500
+    finally:
+        if cursor:
+            cursor.close()
+        if connection:
+            connection.close()
+
+
+
+if __name__ == "__main__":
+
+    app.run( host="0.0.0.0",port=8000,debug=True)
+
+ 
+>>>>>>> be3c2e7209daeccc79adf670c2836d305d51f965
