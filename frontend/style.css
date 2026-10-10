@@ -705,3 +705,77 @@ admin-topbar {
 .admin-student-table {
     padding: 20px 24px;
 }
+
+
+
+student-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 20px;
+    border: 1px solid #8d4b4b;
+    border-radius: 11px;
+    background: #111010;
+}
+
+.student-info h3 {
+    margin-bottom: 12px;
+    color: #f2eeee;
+    font-size: 17px;
+}
+
+.student-info p {
+    margin-top: 7px;
+    color: #aaa5a5;
+    font-size: 13px;
+}
+
+.student-info strong {
+    color: #dedada;
+}
+
+.student-actions {
+    display: flex;
+    flex: 0 0 auto;
+    gap: 10px;
+}
+
+.approve-btn,
+.reject-btn {
+    min-width: 92px;
+    padding: 10px 15px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+.approve-btn {
+    border: 0;
+    background: linear-gradient(135deg, #403434, #a45c5c);
+    color: #f6f3f3;
+}
+
+.approve-btn:hover {
+    background: linear-gradient(135deg, #1a1919, #903333);
+    transform: translateY(-1px);
+}
+
+.reject-btn {
+    border: 1px solid #514444;
+    background: #171313;
+    color: #d6caca;
+}
+
+.reject-btn:hover {
+    border-color: #a45c5c;
+    background: #241818;
+}
+
+.no-students {
+    padding: 0 24px 22px;
+    color: #999494;
+    font-size: 13px;
+}
