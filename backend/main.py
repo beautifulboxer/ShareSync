@@ -176,81 +176,67 @@ def register():
 def admin_login_page():
     return render_template("admin-login.html")
 
-@app.route("/admin-login", methods=["POST"])
+@app.route('/admin-login', methods=['POST'])
 def admin_login():
-    data = request.get_json()
-
-    email = data.get("email", "").strip()
-    password = data.get("password", "")
+    data = request.get_json(silent=True) or {}
+    email = str(data.get('email', '')).strip()
+    password = str(data.get('password', ''))
 
     if not email or not password:
-        return jsonify({
-            "success": False,
-            "message": "Admin email and password are required."
-        }), 400
+        return jsonify({'success': False, 'message': 'Admin email and password are required.'}), 400
 
     connection = None
     cursor = None
 
     try:
         connection = get_db_connection()
-        cursor = connection.cursor(dictionary=True)
+        cursor = get_db_cursor(connection)
 
-        query = """
-            SELECT student_id, student_name, email, password_hash,
-                   role, verification_status
+        cursor.execute('''
+            SELECT student_id, student_name, email, password_hash, role, verification_status
             FROM students
             WHERE email = %s
-        """
-
-        cursor.execute(query, (email,))
+        ''', (email,))
         admin = cursor.fetchone()
 
         if admin is None:
-            return jsonify({
-                "success": False,
-                "message": "Invalid admin email or password."
-            }), 401
+            return jsonify({'success': False, 'message': 'Invalid admin email or password.'}), 401
 
-        if not check_password_hash(admin["password_hash"], password):
-            return jsonify({
-                "success": False,
-                "message": "Invalid admin email or password."
-            }), 401
+        if not check_password_hash(admin['password_hash'], password):
+            return jsonify({'success': False, 'message': 'Invalid admin email or password.'}), 401
 
-        if admin["role"] != "ADMIN":
-            return jsonify({
-                "success": False,
-                "message": "You are not authorized as an admin."
-            }), 403
+        if admin['role'] != 'ADMIN':
+            return jsonify({'success': False, 'message': 'You are not authorized as an admin.'}), 403
 
-        if admin["verification_status"] != "VERIFIED":
-            return jsonify({
-                "success": False,
-                "message": "Admin account is not verified."
-            }), 403
+        if admin['verification_status'] != 'VERIFIED':
+            return jsonify({'success': False, 'message': 'Admin account is not verified.'}), 403
+
+        session.clear()
+        session['admin_id'] = admin['student_id']
+        session['admin_role'] = admin['role']
 
         return jsonify({
-            "success": True,
-            "message": "Admin login successful.",
-            "student_name": admin["student_name"],
-            "role": admin["role"]
+            'success': True,
+            'message': 'Admin login successful.',
+            'student_name': admin['student_name'],
+            'role': admin['role']
         })
-
-    except mysql.connector.Error as error:
-        print("Database error:", error)
-
-        return jsonify({
-            "success": False,
-            "message": "Database error occurred."
-        }), 500
-
+    except Exception as error:
+        print('Admin login error:', error)
+        return jsonify({'success': False, 'message': 'Database error occurred.'}), 500
     finally:
         if cursor:
             cursor.close()
-
         if connection:
             connection.close()
+
+
+
+
+
+
+
+
 
 
 if __name__ == "__main__":
