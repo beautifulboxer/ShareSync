@@ -200,16 +200,16 @@ def admin_login():
         admin = cursor.fetchone()
 
         if admin is None:
-            return jsonify({'success': False, 'message': 'Invalid admin email or password.'}), 401
+            return  jsonify({'success': False, 'message': 'Invalid admin email or password.'}), 401
 
         if not check_password_hash(admin['password_hash'], password):
-            return jsonify({'success': False, 'message': 'Invalid admin email or password.'}), 401
+            return  jsonify({'success': False, 'message': 'Invalid admin email or password.'}), 401
 
         if admin['role'] != 'ADMIN':
-            return jsonify({'success': False, 'message': 'You are not authorized as an admin.'}), 403
+            return  jsonify({'success': False, 'message': 'You are not authorized as an admin.'}), 403
 
         if admin['verification_status'] != 'VERIFIED':
-            return jsonify({'success': False, 'message': 'Admin account is not verified.'}), 403
+            return  jsonify({'success': False, 'message': 'Admin account is not verified.'}), 403
 
         session.clear()
         session['admin_id'] = admin['student_id']
