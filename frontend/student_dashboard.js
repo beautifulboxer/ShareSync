@@ -68,25 +68,12 @@ function createItem(title, details, metadata) {
 
 function renderEmpty(container, message) {
     const empty = document.createElement("p");
-    empty.className = "student-empty";
+    empty.className = " student-empty";
     empty.textContent = message;
-    container.replaceChildren(empty);
+    container.replaceChildren (empty);
 }
 
-function formatDate(value) {
-    return value ? value.replace("T", " ").slice(0, 16) : "";
-}
 
-function formatDueDate(value) {
-    return value ? value.slice(0, 10) : "not set";
-}
-
-function localDateString(date) {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-    return ${year}-${month}-${day};
-}
 
 function renderDashboard(data) {
     const board = document.getElementById("requestBoard");
