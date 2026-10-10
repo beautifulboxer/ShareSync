@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, jsonify
 import mysql.connector
-from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.security  import  generate_password_hash,  check_password_hash
 from dotenv import load_dotenv
 import os
 load_dotenv()
