@@ -20,7 +20,7 @@ function togglePanel(panel, button) {
         item.hidden = true;
     });
     [borrowRequestBtn, activityBtn].forEach((item) => {
-        item.setAttribute("aria-expanded", "false");
+        item.setAttribute ("aria-expanded", "false");
     });
 
     if (shouldOpen) {
