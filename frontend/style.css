@@ -625,3 +625,83 @@ admin-nav-label {
 .admin-main {
     min-width: 0;
 }
+
+
+admin-topbar {
+    display: flex;
+    min-height: 68px;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 5%;
+    border-bottom: 1px solid #303030;
+    background: #111010;
+}
+
+/* .admin-breadcrumb {
+    color: #e1dcdc;
+    font-size: 13px;
+} */
+
+.admin-user {
+    color: #ebe3e3;
+    font-size: 18px;
+}
+
+.admin-content {
+    width: min(1100px, 100%);
+    margin: 0 auto;
+    padding: 48px 5% 28px;
+}
+
+.admin-welcome {
+    margin-bottom: 32px;
+}
+
+.admin-welcome .admin-eyebrow {
+    margin-bottom: 10px;
+    color: #f7eeee;
+    font-size: 11px;
+    letter-spacing: 1.4px;
+}
+
+.admin-welcome h1 {
+    margin: 0;
+    color: #fcf9f9;
+    font-size: 29px;
+    text-align: left;
+}
+
+/* .admin-welcome > p:last-child {
+    margin-top: 9px;
+    color: #a29f9f;
+    font-size: 14px;
+} */
+
+.admin-queue {
+    overflow: hidden;
+    border: 1px solid #7f7373;
+    border-radius: 14px;
+    background: #000000;
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.28);
+}
+
+.admin-queue-heading {
+    padding: 22px 24px;
+    border-bottom: 1px solid #583939;
+}
+
+.admin-queue-heading .admin-eyebrow {
+    margin-bottom: 8px;
+    color: #d86464;
+    font-size: 12px;
+    letter-spacing: 1.2px;
+}
+
+.admin-queue-heading h2 {
+    color: #f1eded;
+    font-size: 20px;
+}
+
+.admin-student-table {
+    padding: 20px 24px;
+}
