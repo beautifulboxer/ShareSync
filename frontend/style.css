@@ -750,4 +750,504 @@
     .student-section-heading {
         align-items: flex-start;
     }
+<<<<<<< HEAD
 }
+=======
+    .register-box {
+        padding: 30px 25px;
+    }
+
+}
+
+
+
+.admin-dashboard-page {
+    background: #252424;
+    color: #656060;
+}
+
+.admin-layout {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 230px minmax(0, 1fr);
+}
+
+.admin-sidebar {
+    display: flex;
+    flex-direction: column;
+    padding: 28px 18px;
+    background: #050505;
+    border-right: 1px solid #303030;
+}
+
+.admin-brand {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    margin: 0 0 48px 5px;
+    color: #e6e4e4;
+    font-size: 19px;
+    font-weight: bold;
+}
+
+.admin-brand:hover,
+.admin-nav-link:hover,
+.admin-logout:hover {
+    color: #fff;
+    transform: none;
+    admin-brand > span:last-child > span {
+    color: #e9e5e5;
+}
+
+.admin-brand-mark {
+    position: relative;
+    display: block;
+    width: 36px;
+    height: 36px;
+    border-radius: 11px;
+    background: #010000;
+}
+
+.admin-brand-mark::before,
+.admin-brand-mark::after {
+    position: absolute;
+    width: 17px;
+    height: 9px;
+    content: "";
+    border: 3px solid #dad8d8;
+}
+
+.admin-brand-mark::before {
+    top: 8px;
+    left: 8px;
+    border-right: 0;
+    border-radius: 10px 0 0 10px;
+}
+
+.admin-brand-mark::after {
+    right: 7px;
+    bottom: 8px;
+    border-left: 0;
+    border-radius: 0 10px 10px 0;
+}
+
+admin-nav-label {
+    margin: 0 10px 12px;
+    color: #dcd2d2;
+    font-size: 15px;
+    letter-spacing: 1px;
+}
+
+.admin-nav {
+    display: grid;
+    gap: 9px;
+}
+
+.admin-nav-link {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    padding: 12px 11px;
+    border-radius: 8px;
+    color: #9e3939;
+    font-size: 15px;
+}
+
+.admin-nav-link.is-active {
+    background: #211919;
+    color: #9b3030;
+}
+
+.admin-nav-icon {
+    color: #f0e9e9;
+    font-size: 20px;
+}
+
+.admin-sidebar-bottom {
+    margin-top: auto;
+    padding-top: 16px;
+    border-top: 1px solid #dfdbdb;
+}
+
+.admin-logout {
+    display: block;
+    padding: 10px;
+    color: #dbd1d1;
+    font-size: 20px;
+}
+
+.admin-main {
+    min-width: 0;
+}
+
+
+admin-topbar {
+    display: flex;
+    min-height: 68px;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 5%;
+    border-bottom: 1px solid #303030;
+    background: #111010;
+}
+
+/* .admin-breadcrumb {
+    color: #e1dcdc;
+    font-size: 13px;
+} */
+
+.admin-user {
+    color: #ebe3e3;
+    font-size: 18px;
+}
+
+.admin-content {
+    width: min(1100px, 100%);
+    margin: 0 auto;
+    padding: 48px 5% 28px;
+}
+
+.admin-welcome {
+    margin-bottom: 32px;
+}
+
+.admin-welcome .admin-eyebrow {
+    margin-bottom: 10px;
+    color: #f7eeee;
+    font-size: 11px;
+    letter-spacing: 1.4px;
+}
+
+.admin-welcome h1 {
+    margin: 0;
+    color: #fcf9f9;
+    font-size: 29px;
+    text-align: left;
+}
+
+/* .admin-welcome > p:last-child {
+    margin-top: 9px;
+    color: #a29f9f;
+    font-size: 14px;
+} */
+
+.admin-queue {
+    overflow: hidden;
+    border: 1px solid #7f7373;
+    border-radius: 14px;
+    background: #000000;
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.28);
+}
+
+.admin-queue-heading {
+    padding: 22px 24px;
+    border-bottom: 1px solid #583939;
+}
+
+.admin-queue-heading .admin-eyebrow {
+    margin-bottom: 8px;
+    color: #d86464;
+    font-size: 12px;
+    letter-spacing: 1.2px;
+}
+
+.admin-queue-heading h2 {
+    color: #f1eded;
+    font-size: 20px;
+}
+
+.admin-student-table {
+    padding: 20px 24px;
+}
+
+
+
+student-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 20px;
+    border: 1px solid #8d4b4b;
+    border-radius: 11px;
+    background: #111010;
+}
+
+.student-info h3 {
+    margin-bottom: 12px;
+    color: #f2eeee;
+    font-size: 17px;
+}
+
+.student-info p {
+    margin-top: 7px;
+    color: #aaa5a5;
+    font-size: 13px;
+}
+
+.student-info strong {
+    color: #dedada;
+}
+
+.student-actions {
+    display: flex;
+    flex: 0 0 auto;
+    gap: 10px;
+}
+
+.approve-btn,
+.reject-btn {
+    min-width: 92px;
+    padding: 10px 15px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+.approve-btn {
+    border: 0;
+    background: linear-gradient(135deg, #403434, #a45c5c);
+    color: #f6f3f3;
+}
+
+.approve-btn:hover {
+    background: linear-gradient(135deg, #1a1919, #903333);
+    transform: translateY(-1px);
+}
+
+.reject-btn {
+    border: 1px solid #514444;
+    background: #171313;
+    color: #d6caca;
+}
+
+.reject-btn:hover {
+    border-color: #a45c5c;
+    background: #241818;
+}
+
+.no-students {
+    padding: 0 24px 22px;
+    color: #999494;
+    font-size: 13px;
+}
+
+
+status-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 96px;
+    padding: 7px 12px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.status-verified {
+    background: rgba(73, 168, 104, 0.18);
+    color: #8fe4a4;
+    border: 1px solid rgba(73, 168, 104, 0.5);
+}
+
+.status-pending {
+    background: rgba(216, 162, 60, 0.16);
+    color: #f3cb75;
+    border: 1px solid rgba(216, 162, 60, 0.5);
+}
+
+.status-rejected {
+    background: rgba(199, 80, 80, 0.16);
+    color: #f1a6a6;
+    border: 1px solid rgba(199, 80, 80, 0.5);
+}
+
+@media (max-width: 700px) {
+    .admin-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-sidebar {
+        padding: 15px 18px;
+        border-right: 0;
+        border-bottom: 1px solid #303030;
+    }
+
+    .admin-brand {
+        margin: 0 0 14px;
+    }
+
+    .admin-nav-label,
+    .admin-sidebar-bottom {
+        display: none;
+    }
+
+    .admin-nav-link {
+        padding: 9px 11px;
+    }
+
+    .admin-topbar {
+        min-height: 56px;
+        padding: 0 18px;
+    }
+
+    .admin-content {
+        padding: 32px 18px 24px;
+    }
+
+    .admin-welcome h1 {
+        font-size: 25px;
+    }
+
+    .student-card {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 18px;
+        padding: 17px;
+    }
+
+    .student-actions {
+        width: 100%;
+    }
+
+    .student-actions button {
+        flex: 1;
+    }
+}
+
+
+.admin-student-table {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    background: #000;
+}
+
+.admin-student {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    width: 100%;
+    min-height: 92px;
+
+    padding: 18px 23px;
+
+    border-top: 1px solid #30282b;
+
+    background: #000;
+}
+
+.admin-student:first-child {
+    border-top: 0;
+}
+
+.admin-student-info {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    min-width: 0;
+}
+
+.admin-student-info strong {
+    color: #f5f5f5;
+    font-size: 15px;
+    font-weight: 650;
+}
+
+.admin-student-info span {
+    color: #999398;
+    font-size: 12px;
+}
+
+.admin-student-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    flex-shrink: 0;
+    margin-left: 30px;
+}
+
+.approve-btn,
+.reject-btn {
+    min-width: 105px;
+    padding: 10px 18px;
+
+    border-radius: 9px;
+
+    font-size: 12px;
+    font-weight: 650;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.approve-btn {
+    border: 1px solid #a45c5c;
+    background: linear-gradient(
+        135deg,
+        #403434,
+        #a45c5c
+    );
+    color: #ffffff;
+}
+
+.reject-btn {
+    border: 1px solid #4b4242;
+    background: #171313;
+    color: #e5dddd;
+}
+
+.approve-btn:hover,
+.reject-btn:hover {
+    transform: translateY(-1px);
+}
+
+.approve-btn:hover {
+    background: linear-gradient(
+        135deg,
+        #514040,
+        #b96868
+    );
+}
+
+.reject-btn:hover {
+    background: #241d1d;
+    border-color: #665858;
+}
+
+.approve-btn:active,
+.reject-btn:active {
+    transform: translateY(0);
+}
+
+@media (max-width: 700px) {
+
+    .admin-student {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .admin-student-actions {
+        width: 100%;
+        margin-left: 0;
+    }
+
+    .approve-btn,
+    .reject-btn {
+        flex: 1;
+    }
+}
+
+
+>>>>>>> be3c2e7209daeccc79adf670c2836d305d51f965
