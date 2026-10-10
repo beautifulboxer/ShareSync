@@ -4,6 +4,7 @@ from werkzeug.security  import  generate_password_hash,  check_password_hash
 from dotenv import load_dotenv
 import os
 load_dotenv()
+from student_dash import student_dashboard_bp
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
