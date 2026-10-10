@@ -1,4 +1,281 @@
 
+.login-page {
+    min-height: calc(100vh - 60px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 30px 20px;
+}
+
+.login-box {
+    width: 100%;
+    max-width: 420px;
+    padding: 40px;
+    border: 1px solid #676767;
+    border-radius: 18px;
+    background: #090707;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+}
+
+.login-page h1 {
+    margin-bottom: 8px;
+    color: #f5f5f5;
+    font-size: 28px;
+    text-align: center;
+}
+
+.login-page .logo {
+    position: relative;
+    width: 48px;
+    height: 48px;
+    margin: 0 auto 18px;
+    border-radius: 12px;
+    background: #020202;
+    transition: box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.login-page .logo:hover {
+    background: #101010;
+    box-shadow: 0 0 16px rgba(255, 255, 255, 0.35);
+}
+
+.ribbon-mark,
+.ribbon-mark::before,
+.ribbon-mark::after {
+    position: absolute;
+    display: block;
+}
+
+.ribbon-mark {
+    top: 10px;
+    left: 11px;
+    width: 26px;
+    height: 28px;
+    transform: rotate(-8deg);
+}
+
+.ribbon-mark::before,
+.ribbon-mark::after {
+    width: 20px;
+    height: 12px;
+    border: 4px solid #fff;
+    content: "";
+}
+
+.ribbon-mark::before {
+    top: 0;
+    left: 0;
+    border-right: 0;
+    border-radius: 14px 0 0 14px;
+}
+
+.ribbon-mark::after {
+    right: 0;
+    bottom: 0;
+    border-left: 0;
+    border-radius: 0 14px 14px 0;
+}
+
+.login-page .welcome {
+    margin-bottom: 32px;
+    color: #999;
+    font-size: 15px;
+    text-align: center;
+}
+
+.login-page .input-group {
+    margin-bottom: 24px;
+}
+
+.login-page .floating-group,
+.login-page .password-group {
+    position: relative;
+}
+
+.login-page .floating-group input {
+    padding: 18px 14px 8px;
+}
+
+.login-page .floating-group label {
+    position: absolute;
+    top: 15px;
+    left: 14px;
+    margin: 0;
+    padding: 0 2px;
+    color: #888;
+    pointer-events: none;
+    transition: top 0.2s ease, left 0.2s ease, color 0.2s ease, font-size 0.2s ease;
+}
+
+.login-page .floating-group input:focus + label,
+.login-page .floating-group input:not(:placeholder-shown) + label {
+    top: -8px;
+    left: 11px;
+    background: #0b0b0b;
+    color: #fff;
+    font-size: 12px;
+}
+
+.login-page input {
+    width: 100%;
+    padding: 13px 14px;
+    border: 1px solid #303030;
+    border-radius: 9px;
+    outline: none;
+    background: #0b0b0b;
+    color: #fff;
+    font-size: 14px;
+    transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.login-page input:hover {
+    border-color: #666;
+}
+
+.login-page input:focus {
+    border-color: #fff;
+    background: #101010;
+}
+
+.login-page .password-group input {
+    padding-right: 52px;
+}
+
+.login-page .password-toggle {
+    position: absolute;
+    right: 10px;
+    bottom: 9px;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: 0;
+    border-radius: 5px;
+    background: transparent;
+    color: #888;
+    font-size: 17px;
+    line-height: 1;
+    cursor: pointer;
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.login-page .password-toggle:hover {
+    color: #fff;
+    transform: scale(1.08);
+}
+
+.login-page .password-toggle.is-visible::after {
+    position: absolute;
+    top: 13px;
+    left: 2px;
+    width: 24px;
+    height: 2px;
+    border-radius: 2px;
+    background: #fff;
+    content: "";
+    transform: rotate(-45deg);
+}
+
+.login-page .forgot {
+    margin: -8px 0 22px;
+    text-align: right;
+}
+
+.login-page a {
+    color: #cecbcb;
+    font-size: 13px;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.login-page a:hover {
+    color: #df2f2f;
+}
+
+.login-page .login-btn {
+    width: 100%;
+    padding: 13px;
+    border: 0;
+    border-radius: 9px;
+    background: linear-gradient(135deg, #403434, #a45c5c);
+    color: #f6f3f3;
+    font-size: 15px;
+    font-weight: bold;
+    letter-spacing: 0.2px;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.login-page .login-btn::after {
+    display: inline-block;
+    margin-left: 8px;
+    content: "\2192";
+    transition: transform 0.2s ease;
+}
+
+.login-page .login-btn:hover {
+    background: linear-gradient(135deg, #1a1919, #903333);
+    box-shadow: 0 7px 16px rgba(229, 226, 226, 0.35);
+    transform: translateY(-2px);
+}
+
+.login-page .login-btn:hover::after {
+    transform: translateX(3px);
+}
+
+.login-page .login-btn:focus-visible {
+    outline: 2px solid #dedbdb;
+    outline-offset: 3px;
+}
+
+.login-page .divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 28px 0;
+    color: #aaa;
+    font-size: 12px;
+}
+
+.login-page .divider::before,
+.login-page .divider::after {
+    height: 1px;
+    flex: 1;
+    background: #4f4c4c;
+    content: "";
+}
+
+.login-page .create-account-link {
+    margin-top: 24px;
+    color: #aaa;
+    font-size: 14px;
+    text-align: center;
+}
+
+.login-page .create-account-link a {
+    display: inline-block;
+    margin-left: 4px;
+}
+
+.footer {
+    padding: 20px;
+    color: #c5c3c3;
+    font-size: 13px;
+    text-align: center;
+}
+
+@media (max-width: 480px) {
+    .login-page {
+        padding: 20px;
+    }
+
+    .login-box {
+        padding: 30px 24px;
+    }
+
+    .login-page h1 {
+        font-size: 25px;
+    }
+}
 
 .admin-user {
     color: #ebe3e3;
@@ -750,16 +1027,8 @@
     .student-section-heading {
         align-items: flex-start;
     }
-<<<<<<< HEAD
-}
-=======
-    .register-box {
-        padding: 30px 25px;
-    }
 
 }
-
-
 
 .admin-dashboard-page {
     background: #252424;
@@ -795,7 +1064,9 @@
 .admin-logout:hover {
     color: #fff;
     transform: none;
-    admin-brand > span:last-child > span {
+}
+
+.admin-brand > span:last-child > span {
     color: #e9e5e5;
 }
 
@@ -831,7 +1102,7 @@
     border-radius: 0 10px 10px 0;
 }
 
-admin-nav-label {
+.admin-nav-label {
     margin: 0 10px 12px;
     color: #dcd2d2;
     font-size: 15px;
@@ -881,7 +1152,7 @@ admin-nav-label {
 }
 
 
-admin-topbar {
+.admin-topbar {
     display: flex;
     min-height: 68px;
     align-items: center;
@@ -894,7 +1165,7 @@ admin-topbar {
 /* .admin-breadcrumb {
     color: #e1dcdc;
     font-size: 13px;
-} */
+} 
 
 .admin-user {
     color: #ebe3e3;
@@ -962,7 +1233,7 @@ admin-topbar {
 
 
 
-student-card {
+.student-card {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -1035,7 +1306,7 @@ student-card {
 }
 
 
-status-badge {
+.status-badge {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -1248,6 +1519,3 @@ status-badge {
         flex: 1;
     }
 }
-
-
->>>>>>> be3c2e7209daeccc79adf670c2836d305d51f965
