@@ -864,3 +864,133 @@ status-badge {
         flex: 1;
     }
 }
+
+
+.admin-student-table {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    background: #000;
+}
+
+.admin-student {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    width: 100%;
+    min-height: 92px;
+
+    padding: 18px 23px;
+
+    border-top: 1px solid #30282b;
+
+    background: #000;
+}
+
+.admin-student:first-child {
+    border-top: 0;
+}
+
+.admin-student-info {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    min-width: 0;
+}
+
+.admin-student-info strong {
+    color: #f5f5f5;
+    font-size: 15px;
+    font-weight: 650;
+}
+
+.admin-student-info span {
+    color: #999398;
+    font-size: 12px;
+}
+
+.admin-student-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    flex-shrink: 0;
+    margin-left: 30px;
+}
+
+.approve-btn,
+.reject-btn {
+    min-width: 105px;
+    padding: 10px 18px;
+
+    border-radius: 9px;
+
+    font-size: 12px;
+    font-weight: 650;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.approve-btn {
+    border: 1px solid #a45c5c;
+    background: linear-gradient(
+        135deg,
+        #403434,
+        #a45c5c
+    );
+    color: #ffffff;
+}
+
+.reject-btn {
+    border: 1px solid #4b4242;
+    background: #171313;
+    color: #e5dddd;
+}
+
+.approve-btn:hover,
+.reject-btn:hover {
+    transform: translateY(-1px);
+}
+
+.approve-btn:hover {
+    background: linear-gradient(
+        135deg,
+        #514040,
+        #b96868
+    );
+}
+
+.reject-btn:hover {
+    background: #241d1d;
+    border-color: #665858;
+}
+
+.approve-btn:active,
+.reject-btn:active {
+    transform: translateY(0);
+}
+
+@media (max-width: 700px) {
+
+    .admin-student {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .admin-student-actions {
+        width: 100%;
+        margin-left: 0;
+    }
+
+    .approve-btn,
+    .reject-btn {
+        flex: 1;
+    }
+}
