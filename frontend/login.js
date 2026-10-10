@@ -1,166 +1,66 @@
-const loginForm = document.getElementById("loginForm");
-const adminLoginForm=document.getElementById("adminLoginForm");
 
-const adminPassword=document.getElementById("adminPassword");
-const passwordInput = document.getElementById("password");
 
-const passwordToggle = document.getElementById("passwordToggle");
-const adminPasswordToggle=document.getElementById("adminPasswordToggle");
+const studentTable = document.getElementById("studentTable");
+const noStudentsMessage = document.getElementById("noStudentsMessage");
 
-if (passwordToggle && passwordInput) {
-    passwordToggle.addEventListener("click", function () {
-        const isVisible = passwordInput.type === "text";
+if (studentTable) {
+    const students = studentTable.querySelectorAll(".admin-student");
+    students.forEach(function (studentElement) {
 
-        passwordInput.type = isVisible ? "password" : "text";
+        const studentId = studentElement.dataset.studentId;
 
-        passwordToggle.setAttribute(
-            "aria-label",
-            isVisible ? "Show password" : "Hide password"
-        );
-
-        passwordToggle.setAttribute(
-            "title",
-            isVisible ? "Show password" : "Hide password"
-        );
-
-        passwordToggle.classList.toggle("is-visible", !isVisible);
-    });
-}
-
-if (loginForm) {
-    loginForm.addEventListener("submit", async function (event) {
-        event.preventDefault();
-
-        const email = document.getElementById("email").value.trim();
-        const password = passwordInput.value;
-
-        if (email === "" || password === "") {
-            alert("Enter email and password.");
-            return;
-        }
-
-        try {
-            const response = await fetch("/login", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    email: email,
-                    password: password
-                })
+        const approveBtn =
+            studentElement.querySelector(".approve-btn");
+        const rejectBtn =
+            studentElement.querySelector(".reject-btn");
+        if (approveBtn) {
+            approveBtn.addEventListener("click", function () {
+                reviewStudent(
+                    studentId,
+                    "approve",
+                    studentElement
+                );
             });
-
-            const data = await response.json();
-
-            alert(data.message);
-
-        } catch (error) {
-            console.error(error);
-            alert("Unable to connect to the server.");
         }
-    });
-}
-
-if (adminPasswordToggle && adminPassword) {
-    adminPasswordToggle.addEventListener("click", function () {
-        const isVisible = adminPassword.type === "text";
-        adminPassword.type = isVisible ? "password" : "text";
-        adminPasswordToggle.setAttribute(
-            "aria-label",
-            isVisible ? "Show password" : "Hide password"
-        );
-        adminPasswordToggle.setAttribute(
-            "title",
-            isVisible ? "Show password" : "Hide password"
-        );
-        adminPasswordToggle.classList.toggle(
-            "is-visible",
-            !isVisible
-        );
-    });
-}
-
-
-if (adminLoginForm) {
-    adminLoginForm.addEventListener("submit", async function (event) {
-        event.preventDefault();
-        const email = document.getElementById("adminEmail").value.trim();
-        const password = adminPassword.value;
-        if (email === "" || password === "") {
-            alert("Enter admin email and password.");
-            return;
-        }
-        try {
-            const response = await fetch("/admin-login", {
-                method: "POST",
-
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    email: email,
-                    password: password
-                })
+        if (rejectBtn) {
+            rejectBtn.addEventListener("click", function () {
+                reviewStudent(
+                    studentId,
+                    "reject",
+                    studentElement
+                );
             });
-            const data = await response.json();
-            alert(data.message);
-            if (data.success) {
-                window.location.href = "/admin-dashboard";
+        }
+    });
+}
+
+async function reviewStudent(studentId, action, studentElement) {
+
+    try {
+        const response = await fetch("/admin-review-student", {
+            method: "POST",
+
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                student_id: studentId,
+                action: action
+            })
+        });
+
+        const data = await response.json();
+        alert(data.message);
+        if (data.success) {
+            studentElement.remove();
+
+            if (studentTable && noStudentsMessage && studentTable.children.length === 0) {
+                noStudentsMessage.style.display = "block";
             }
-        } catch (error) {
-            console.error(error);
-            alert("Unable to connect to the server.");
         }
-    });
+    } catch (error) {
+        console.error(error);
+        alert("Unable to connect to the server.");
+    }
 }
 
-
-const registerForm = document.getElementById("registerForm");
-if (registerForm) {
-    registerForm.addEventListener("submit", async function (event) {
-        event.preventDefault();
-
-        const name = document.getElementById("name").value.trim();
-        const collegeId = document.getElementById("collegeId").value.trim();
-        const email = document.getElementById("email").value.trim();
-        const password = document.getElementById("password").value;
-
-        if (
-            name === "" ||
-            collegeId === "" ||
-            email === "" ||
-            password === ""
-        ) {
-            alert("Please fill all fields.");
-            return;
-        }
-
-        try {
-            const response = await fetch("/register", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    name: name,
-                    collegeId: collegeId,
-                    email: email,
-                    password: password
-                })
-            });
-
-            const data = await response.json();
-
-            alert(data.message);
-
-            if (data.success) {
-                registerForm.reset();
-            }
-
-        } catch (error) {
-            console.error(error);
-            alert("Unable to connect to the server.");
-        }
-    });
-}

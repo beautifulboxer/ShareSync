@@ -1,0 +1,14 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Run ShareSync Flask app",
+			"type": "shell",
+			"command": "cd /d \"c:\\Users\\vanee\\OneDrive\\Desktop\\ShareSync\" && python backend/main.py",
+			"args": [],
+			"isBackground": true,
+			"problemMatcher": [],
+			"group": "build"
+		}
+	]
+}
