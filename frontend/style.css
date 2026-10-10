@@ -504,3 +504,40 @@ a:hover {
     }
 
 }
+
+
+
+.admin-dashboard-page {
+    background: #252424;
+    color: #656060;
+}
+
+.admin-layout {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 230px minmax(0, 1fr);
+}
+
+.admin-sidebar {
+    display: flex;
+    flex-direction: column;
+    padding: 28px 18px;
+    background: #050505;
+    border-right: 1px solid #303030;
+}
+
+.admin-brand {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    margin: 0 0 48px 5px;
+    color: #e6e4e4;
+    font-size: 19px;
+    font-weight: bold;
+}
+
+.admin-brand:hover,
+.admin-nav-link:hover,
+.admin-logout:hover {
+    color: #fff;
+    transform: none;
