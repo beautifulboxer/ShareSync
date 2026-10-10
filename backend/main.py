@@ -131,79 +131,17 @@ def login():
         if connection:
             connection.close()
 
-
-@app.route("/register", methods=["POST"])
-def register():
-    data = request.get_json()
-
-    name = data.get("name", "").strip()
-    college_id = data.get("collegeId", "").strip()
-    email = data.get("email", "").strip()
-    password = data.get("password", "")
-
-    if not name or not college_id or not email or not password:
-        return jsonify({
-            "success": False,
-            "message": "Please fill all fields."
-        }), 400
-
-    try:
-        student_id = int(college_id)
-    except ValueError:
-        return jsonify({
-            "success": False,
-            "message": "College ID must be a number."
-        }), 400
-
-    password_hash = generate_password_hash(password)
-
-    connection = None
-    cursor = None
-
-    try:
-        connection = get_db_connection()
-        cursor = connection.cursor()
-
-        query = """
-            INSERT INTO students
-            (student_id, student_name, email, password_hash, role, verification_status)
-            VALUES (%s, %s, %s, %s, 'STUDENT', 'PENDING')
-        """
-
-        cursor.execute(
-            query,
-            (student_id, name, email, password_hash)
-        )
-
-        connection.commit()
-
-        return jsonify({
-            "success": True,
-            "message": "Registered successfully! Wait for Admin's approval."
-        })
-
-    except mysql.connector.IntegrityError as error:
-        print("Integrity error:", error)
-
-        return jsonify({
-            "success": False,
-            "message": "College ID or email already exists."
-        }), 409
-
-    except mysql.connector.Error as error:
-        print("Database error:", error)
-
-        return jsonify({
-            "success": False,
-            "message": "Database error occurred."
-        }), 500
-
-    finally:
-        if cursor:
-            cursor.close()
-        if connection:
-            connection.close()
             
+@app.route('/register', methods=['POST'])
+def register():
+    data = request.get_json(silent=True) or {}
+    name = str(data.get('name', '')).strip()
+    college_id = str(data.get('collegeId', '')).strip()
+    email = str(data.get('email', '')).strip()
+    password = str(data.get('password', ''))
+
+
+ 
 @app.route("/admin")
 def admin_login_page():
     return render_template("admin-login.html")
