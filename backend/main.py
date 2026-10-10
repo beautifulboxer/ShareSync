@@ -15,6 +15,7 @@ app = Flask(
 )
 
 app.secret_key = os.getenv('FLASK_SECRET_KEY') or 'share-sync-dev-secret'
+student_request_lock = Lock()
 
 
 
