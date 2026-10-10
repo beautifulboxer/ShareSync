@@ -231,8 +231,10 @@ def admin_login():
             connection.close()
 
 
-
-
+@app.route('/admin-logout')
+def admin_logout():
+    session.clear()
+    return redirect('/admin')
 
 
 
