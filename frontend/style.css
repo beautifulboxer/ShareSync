@@ -541,3 +541,38 @@ a:hover {
 .admin-logout:hover {
     color: #fff;
     transform: none;
+    admin-brand > span:last-child > span {
+    color: #e9e5e5;
+}
+
+.admin-brand-mark {
+    position: relative;
+    display: block;
+    width: 36px;
+    height: 36px;
+    border-radius: 11px;
+    background: #010000;
+}
+
+.admin-brand-mark::before,
+.admin-brand-mark::after {
+    position: absolute;
+    width: 17px;
+    height: 9px;
+    content: "";
+    border: 3px solid #dad8d8;
+}
+
+.admin-brand-mark::before {
+    top: 8px;
+    left: 8px;
+    border-right: 0;
+    border-radius: 10px 0 0 10px;
+}
+
+.admin-brand-mark::after {
+    right: 7px;
+    bottom: 8px;
+    border-left: 0;
+    border-radius: 0 10px 10px 0;
+}
