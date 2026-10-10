@@ -161,7 +161,20 @@ def register():
             ''',
             (student_id, name, email, password_hash)
         )
- 
+        connection.commit()
+        return jsonify({'success': True, 'message': "Registered successfully! Wait for Admin's approval."})
+    except mysql.connector.IntegrityError:
+        return jsonify({'success': False, 'message': 'College ID or email already exists.'}), 409
+    except Exception as error:
+        print('Register error:', error)
+        return jsonify({'success': False, 'message': 'Database error occurred.'}), 500
+    finally:
+        if cursor:
+            cursor.close()
+        if connection:
+            connection.close()
+
+
 @app.route("/admin")
 def admin_login_page():
     return render_template("admin-login.html")
