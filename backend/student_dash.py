@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, session, redirect
 
 student_dashboard_bp = Blueprint(
     "student_dashboard",
-    _name_
+    __name__
 )
 
 @student_dashboard_bp.route("/student-dashboard")

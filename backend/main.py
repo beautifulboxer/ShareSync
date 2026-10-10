@@ -1,21 +1,23 @@
-<<<<<<< HEAD
-﻿from flask import Flask, render_template, request, jsonify, session, redirect
-=======
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, session, redirect
 import mysql.connector
 from werkzeug.security  import  generate_password_hash,  check_password_hash
 from dotenv import load_dotenv
 import os
 load_dotenv()
 from student_dash import student_dashboard_bp
->>>>>>> be3c2e7209daeccc79adf670c2836d305d51f965
-
 from datetime import date, datetime
 from threading import Lock
 
 
-<<<<<<< HEAD
-=======
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+app = Flask(
+    __name__,
+    template_folder=os.path.join(BASE_DIR, "frontend"),
+    static_folder=os.path.join(BASE_DIR, "frontend"),
+    static_url_path="/static"
+)
+
 app.secret_key = os.getenv('FLASK_SECRET_KEY') or 'share-sync-dev-secret'
 student_request_lock = Lock()
 
@@ -54,7 +56,84 @@ def get_db_connection():
         password=os.getenv("MYSQL_PASSWORD"),
         database=os.getenv("MYSQL_DATABASE")
     )
->>>>>>> be3c2e7209daeccc79adf670c2836d305d51f965
+
+
+@app.route("/")
+def home():
+    return render_template("login.html")
+
+
+@app.route("/register")
+def register_page():
+    return render_template("register.html")
+
+
+@app.route("/login", methods=["POST"])
+def login():
+    data = request.get_json()
+
+    email = data.get("email", "").strip()
+    password = data.get("password", "")
+
+    if not email or not password:
+        return jsonify({
+            "success": False,
+            "message": "Email and password are required."
+        }), 400
+
+    connection = None
+    cursor = None
+
+    try:
+        connection = get_db_connection()
+        cursor = connection.cursor(dictionary=True)
+        cursor.execute(
+            """
+            SELECT student_id, student_name, email, password_hash,
+                   role, verification_status
+            FROM students
+            WHERE email = %s
+            """,
+            (email,)
+        )
+        user = cursor.fetchone()
+
+        if user is None:
+            return jsonify({
+                "success": False,
+                "message": "Invalid email or password."
+            }), 401
+
+        if not check_password_hash(user["password_hash"], password):
+            return jsonify({
+                "success": False,
+                "message": "Invalid email or password."
+            }), 401
+
+        if user["verification_status"] != "VERIFIED":
+            return jsonify({
+                "success": False,
+                "message": "Your account is not verified yet."
+            }), 403
+
+        return jsonify({
+            "success": True,
+            "message": "Welcome to ShareSync!",
+            "student_name": user["student_name"],
+            "role": user["role"]
+        })
+
+    except mysql.connector.Error as error:
+        print("Database error:", error)
+        return jsonify({
+            "success": False,
+            "message": "Database error occurred."
+        }), 500
+    finally:
+        if cursor:
+            cursor.close()
+        if connection:
+            connection.close()
 
 def get_db_cursor(connection):
     return connection.cursor(dictionary=True)
@@ -301,7 +380,6 @@ def student_dashboard_data():
             connection.close()
 
 
-<<<<<<< HEAD
 @app.route('/api/student-dashboard/requests', methods=['POST'])
 def create_student_resource_request():
     if not is_student_session():
@@ -785,7 +863,39 @@ def admin_review_student():
         return jsonify({'success': False, 'message': 'Invalid action.'}), 400
 
     new_status = 'VERIFIED' if action == 'approve' else 'REJECTED'
-=======
+    connection = None
+    cursor = None
+    try:
+        connection = get_db_connection()
+        cursor = connection.cursor()
+        cursor.execute(
+            '''
+            UPDATE students
+            SET verification_status = %s
+            WHERE student_id = %s AND role = 'STUDENT' AND verification_status = 'PENDING'
+            ''',
+            (new_status, student_id)
+        )
+
+        if cursor.rowcount == 0:
+            connection.rollback()
+            return jsonify({'success': False, 'message': 'Student not found or already reviewed.'}), 404
+
+        connection.commit()
+        message = 'Student approved successfully.' if action == 'approve' else 'Student rejected successfully.'
+        return jsonify({'success': True, 'message': message})
+    except Exception as error:
+        print('Review error:', error)
+        if connection:
+            connection.rollback()
+        return jsonify({'success': False, 'message': 'Database error occurred.'}), 500
+    finally:
+        if cursor:
+            cursor.close()
+        if connection:
+            connection.close()
+
+
 @app.route('/register', methods=['POST'])
 def register():
     data = request.get_json(silent=True) or {}
@@ -802,7 +912,6 @@ def register():
         return jsonify({'success': False, 'message': 'College ID must be a number.'}), 400
 
     password_hash = generate_password_hash(password)
->>>>>>> be3c2e7209daeccc79adf670c2836d305d51f965
     connection = None
     cursor = None
     try:
@@ -810,29 +919,6 @@ def register():
         cursor = connection.cursor()
         cursor.execute(
             '''
-<<<<<<< HEAD
-            UPDATE students
-            SET verification_status = %s
-            WHERE student_id = %s AND role = 'STUDENT' AND verification_status = 'PENDING'
-            ''',
-            (new_status, student_id)
-        )
-
-        if cursor.rowcount == 0:
-            connection.rollback()
-            return jsonify({'success': False, 'message': 'Student not found or already reviewed.'}), 404
-
-        connection.commit()
-        message = 'Student approved successfully.' if action == 'approve' else 'Student rejected successfully.'
-        return jsonify({'success': True, 'message': message})
-    except Exception as error:
-
-        print('Review error:', error)
-        if connection:
-            connection.rollback()
-        return jsonify({'success': False, 'message': 'Database error occurred.'}), 500
-    
-=======
             INSERT INTO students
             (student_id, student_name, email, password_hash, role, verification_status)
             VALUES (%s, %s, %s, %s, 'STUDENT', 'PENDING')
@@ -846,17 +932,11 @@ def register():
     except Exception as error:
         print('Register error:', error)
         return jsonify({'success': False, 'message': 'Database error occurred.'}), 500
->>>>>>> be3c2e7209daeccc79adf670c2836d305d51f965
     finally:
         if cursor:
             cursor.close()
         if connection:
             connection.close()
-<<<<<<< HEAD
-
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8000, debug=True)
-=======
 
 
 @app.route("/admin")
@@ -964,7 +1044,7 @@ def admin_student_history():
     if 'admin_id' not in session:
         return redirect('/admin')
     if session.get('admin_role') != 'ADMIN':
-        return redirect('/admin')*
+        return redirect('/admin')
     connection = None
     cursor = None
     try:
@@ -990,8 +1070,4 @@ def admin_student_history():
 
 
 if __name__ == "__main__":
-
-    app.run( host="0.0.0.0",port=8000,debug=True)
-
- 
->>>>>>> be3c2e7209daeccc79adf670c2836d305d51f965
+    app.run(host="0.0.0.0", port=8000, debug=True)
