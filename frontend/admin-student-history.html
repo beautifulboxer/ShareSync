@@ -37,3 +37,58 @@
                     Student History
                 </a>
             </nav>
+            <div class="admin-sidebar-bottom">
+                <a href="/admin-logout" class="admin-logout">
+                    Logout
+                </a>
+            </div>
+        </aside>
+
+        <main class="admin-main">
+            <header class="admin-topbar">
+                <div class="admin-breadcrumb">
+                    ShareSync / Student History
+                </div>
+                <div class="admin-user">
+                    ShareSync Admin
+                </div>
+            </header>
+
+            <div class="admin-content">
+                <section class="admin-welcome">
+                    <p class="admin-eyebrow">
+                        STUDENT HISTORY
+                    </p>
+                    <h1>
+                        Review Student Verification History
+                    </h1>
+                </section>
+
+                <section class="admin-queue">
+                    <div class="admin-student-table" id="studentHistoryTable">
+                        {% if students %}
+                            {% for student in students %}
+                                <div class="admin-student" data-student-id="{{ student.student_id }}">
+                                    <div class="admin-student-info">
+                                        <strong>{{ student.student_name }}</strong>
+                                        <span>{{ student.email }}</span>
+                                        <span>ID: {{ student.student_id }}</span>
+                                    </div>
+
+                                    <div class="admin-student-actions">
+                                        <span class="status-badge status-{{ student.verification_status | lower }}">
+                                            {{ student.verification_status }}
+                                        </span>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <p class="no-students">No student history available.</p>
+                        {% endif %}
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+</body>
+</html>
