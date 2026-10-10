@@ -235,9 +235,9 @@ refreshDashboardBtn.addEventListener("click", loadDashboard);
 
 document.querySelectorAll("[data-close-panel]").forEach((button) => {
     button.addEventListener("click", () => {
-        button.closest(".student-panel").hidden = true;
+        button .closest(".student-panel").hidden = true;
         [borrowRequestBtn, activityBtn].forEach((item) => {
-            item.setAttribute("aria-expanded", "false");
+            item.setAttribute ("aria-expanded", "false");
         });
     });
 });
