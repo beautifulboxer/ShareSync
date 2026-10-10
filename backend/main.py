@@ -17,6 +17,30 @@ app = Flask(
 app.secret_key = os.getenv('FLASK_SECRET_KEY') or 'share-sync-dev-secret'
 student_request_lock = Lock()
 
+
+@app.before_request
+def check_authentication():
+    allowed_routes = {
+        'home',
+        'login','register_page','register',
+        'admin_login_page',
+        'admin_login','student_logout', 'admin_logout'
+    }
+    if request.endpoint in allowed_routes:
+        return
+    if request.path.startswith('/static/'):
+        return
+    if request.path.startswith('/api/student-dashboard'):
+        return
+
+    if 'student_id' not in session and 'admin_id' not in session:
+        return redirect('/')
+    if 'student_id' in session and request.path.startswith('/admin-dashboard'):
+        return redirect('/student-dashboard')
+    if 'admin_id' in session and request.path.startswith('/student-dashboard'):
+        return redirect('/admin-dashboard')
+
+
 app.register_blueprint(student_dashboard_bp)
 
 
