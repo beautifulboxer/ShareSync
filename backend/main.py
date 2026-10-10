@@ -233,6 +233,11 @@ def admin_login():
         if connection:
             connection.close()
 
+@app.route('/student-logout')
+def student_logout():
+    session.clear()
+    return redirect('/')
+
 
 @app.route('/admin-logout')
 def admin_logout():
