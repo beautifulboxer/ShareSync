@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShareSync - Student History</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="admin-dashboard-page">
+
+    <div class="admin-layout">
+
+        <aside class="admin-sidebar">
+
+            <a href="/admin-dashboard" class="admin-brand">
+                <span class="admin-brand-mark">
+                    <span></span>
+                </span>
+                <span>
+                    Share<span>Sync</span>
+                </span>
+            </a>
+
+            <p class="admin-nav-label">
+                ADMIN PANEL
+            </p>
+
+            <nav class="admin-nav">
+                <a href="/admin-dashboard" class="admin-nav-link">
+                    <span class="admin-nav-icon">⌂</span>
+                    Dashboard
+                </a>
+
+                <a href="/admin-student-history" class="admin-nav-link is-active">
+                    <span class="admin-nav-icon">◷</span>
+                    Student History
+                </a>
+            </nav>
