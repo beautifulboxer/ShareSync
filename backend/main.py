@@ -238,6 +238,37 @@ def admin_logout():
 
 
 
+@app.route('/admin-dashboard')
+def admin_dashboard():
+    if 'admin_id' not in session:
+        return redirect('/admin')
+    if session.get('admin_role') != 'ADMIN':
+        return redirect('/admin')
+
+    connection = None
+    cursor = None
+    try:
+        connection = get_db_connection()
+        cursor = get_db_cursor(connection)
+        cursor.execute('''
+            SELECT student_id, student_name, email, created_at
+            FROM students
+            WHERE role = 'STUDENT' AND verification_status = 'PENDING'
+            ORDER BY created_at DESC
+        ''')
+        pending_students = cursor.fetchall()
+        return render_template('admin-dashboard.html', students=pending_students)
+    except Exception as error:
+        print('Admin dashboard error:', error)
+        return 'Database error occurred.', 500
+    finally:
+        if cursor:
+            cursor.close()
+        if connection:
+            connection.close()
+
+
+
 
 if __name__ == "__main__":
 
