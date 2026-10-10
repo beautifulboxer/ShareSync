@@ -14,6 +14,10 @@ app = Flask(
     static_url_path="/static"
 )
 
+app.secret_key = os.getenv('FLASK_SECRET_KEY') or 'share-sync-dev-secret'
+
+
+
 def get_db_connection():
     return mysql.connector.connect(
         host=os.getenv("MYSQL_HOST"),
