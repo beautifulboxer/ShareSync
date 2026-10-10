@@ -150,7 +150,17 @@ def register():
     password_hash = generate_password_hash(password)
     connection = None
     cursor = None
-
+    try:
+        connection = get_db_connection()
+        cursor = connection.cursor()
+        cursor.execute(
+            '''
+            INSERT INTO students
+            (student_id, student_name, email, password_hash, role, verification_status)
+            VALUES (%s, %s, %s, %s, 'STUDENT', 'PENDING')
+            ''',
+            (student_id, name, email, password_hash)
+        )
  
 @app.route("/admin")
 def admin_login_page():
