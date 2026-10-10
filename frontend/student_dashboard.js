@@ -242,9 +242,9 @@ document.querySelectorAll("[data-close-panel]").forEach((button) => {
     });
 });
 
-document.getElementById("borrowRequestForm").addEventListener("submit", (event) => {
+document.getElementById ("borrowRequestForm").addEventListener("submit", (event) => {
     event.preventDefault();
-    submitRequest(event.currentTarget);
+    submitRequest (event.currentTarget);
 });
 
 loadDashboard();
