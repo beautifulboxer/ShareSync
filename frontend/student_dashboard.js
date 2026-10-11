@@ -38,7 +38,7 @@ function  togglePanel(panel, button) {
     }
 }
 
-async function apiRequest(url, options = {}) {
+async  function  apiRequest(url, options = {}) {
     const response = await fetch(url, {
         ...options,
         headers: {
