@@ -97,7 +97,7 @@ function  localDateString(date) {
     return ${year}-${month}-${day};
 }
 
-function renderDashboard(data) {
+function  renderDashboard(data) {
     const board = document.getElementById("requestBoard");
     board.replaceChildren();
     if (!data.board_requests.length) {
