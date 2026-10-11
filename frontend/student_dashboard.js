@@ -1,8 +1,16 @@
+<<<<<<< HEAD
 const  borrowRequestBtn = document.getElementById("borrowRequestBtn");
 const  activityBtn = document.getElementById("activityBtn");
 const  refreshDashboardBtn = document.getElementById("refreshDashboardBtn");
 const  studentNotice = document.getElementById("studentNotice");
 document.getElementById("borrowDueDate").min = localDateString(new Date());
+=======
+const borrowRequestBtn = document. getElementById("borrowRequestBtn");
+const activityBtn = document.getElementById("activityBtn");
+const refreshDashboardBtn = document. getElementById("refreshDashboardBtn");
+const studentNotice = document.getElementById("studentNotice");
+document.getElementById ("borrowDueDate").min = localDateString(new Date());
+>>>>>>> d9568ff28ff5196f736128a6a16b9b2dfc36e1d9
 const dashboardPanels = [
     document.getElementById("borrowRequestPanel"),
     document.getElementById("activityPanel")
@@ -20,7 +28,7 @@ function togglePanel(panel, button) {
         item.hidden = true;
     });
     [borrowRequestBtn, activityBtn].forEach((item) => {
-        item.setAttribute("aria-expanded", "false");
+        item.setAttribute ("aria-expanded", "false");
     });
 
     if (shouldOpen) {
@@ -68,23 +76,24 @@ function createItem(title, details, metadata) {
 
 function renderEmpty(container, message) {
     const empty = document.createElement("p");
-    empty.className = "student-empty";
+    empty.className = " student-empty";
     empty.textContent = message;
-    container.replaceChildren(empty);
+    container.replaceChildren (empty);
 }
 
-function formatDate(value) {
+
+
+function formatDate (value) {
     return value ? value.replace("T", " ").slice(0, 16) : "";
 }
 
-function formatDueDate(value) {
+function formatDueDate (value) {
     return value ? value.slice(0, 10) : "not set";
 }
-
 function localDateString(date) {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
+    const  year = date.getFullYear();
+    const  month = String(date.getMonth() + 1).padStart(2, "0");
+    const  day = String(date.getDate()).padStart(2, "0");
     return ${year}-${month}-${day};
 }
 
@@ -203,16 +212,16 @@ async function loadDashboard() {
     }
 }
 
-async function submitRequest(form) {
+async function submitRequest (form) {
     const values = Object.fromEntries(new FormData(form).entries());
-    const submitButton = form.querySelector('button[type="submit"]');
+    const submitButton = form.querySelector ('button[type="submit"]');
     submitButton.disabled = true;
     try {
         const result = await apiRequest("/api/student-dashboard/requests", {
             method: "POST",
             body: JSON.stringify(values)
         });
-        showNotice(result.message);
+        showNotice (result.message);
         form.reset();
         form.closest(".student-panel").hidden = true;
         borrowRequestBtn.setAttribute("aria-expanded", "false");
@@ -234,14 +243,14 @@ refreshDashboardBtn.addEventListener("click", loadDashboard);
 
 document.querySelectorAll("[data-close-panel]").forEach((button) => {
     button.addEventListener("click", () => {
-        button.closest(".student-panel").hidden = true;
+        button .closest(".student-panel").hidden = true;
         [borrowRequestBtn, activityBtn].forEach((item) => {
-            item.setAttribute("aria-expanded", "false");
+            item.setAttribute ("aria-expanded", "false");
         });
     });
 });
 
-document.getElementById("borrowRequestForm").addEventListener("submit", (event) => {
+document.getElementById ("borrowRequestForm").addEventListener("submit", (event) => {
     event.preventDefault();
     submitRequest(event.currentTarget);
 });

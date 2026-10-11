@@ -24,10 +24,10 @@ INSERT INTO students
 )
 VALUES
 (
-    999,
+       999,
     'ShareSync Admin',
     'admin@sharesync.com',
-    'scrypt:32768:8:1$sAaMO4qEedB3eZ0C$2787198bacbceababec8b648091d85cfe2cfc6d7dfd20a4a34bc1a88bbc08e9ffab99ea61f67baa7aa64639eee0eb7a843678c57d12469276a8e7e4814e03fa0'
+    'scrypt:32768:8:1$sAaMO4qEedB3eZ0C$2787198bacbceababec8b648091d85cfe2cfc6d7dfd20a4a34bc1a88bbc08e9ffab99ea61f67baa7aa64639eee0eb7a843678c57d12469276a8e7e4814e03fa0',
     'ADMIN',
     'VERIFIED'
 );

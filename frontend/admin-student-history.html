@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShareSync - Student History</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="admin-dashboard-page">
+
+    <div class="admin-layout">
+
+        <aside class="admin-sidebar">
+
+            <a href="/admin-dashboard" class="admin-brand">
+                <span class="admin-brand-mark">
+                    <span></span>
+                </span>
+                <span>
+                    Share<span>Sync</span>
+                </span>
+            </a>
+
+            <p class="admin-nav-label">
+                ADMIN PANEL
+            </p>
+
+            <nav class="admin-nav">
+                <a href="/admin-dashboard" class="admin-nav-link">
+                    <span class="admin-nav-icon">⌂</span>
+                    Dashboard
+                </a>
+
+                <a href="/admin-student-history" class="admin-nav-link is-active">
+                    <span class="admin-nav-icon">◷</span>
+                    Student History
+                </a>
+            </nav>
+            <div class="admin-sidebar-bottom">
+                <a href="/admin-logout" class="admin-logout">
+                    Logout
+                </a>
+            </div>
+        </aside>
+
+        <main class="admin-main">
+            <header class="admin-topbar">
+                <div class="admin-breadcrumb">
+                    ShareSync / Student History
+                </div>
+                <div class="admin-user">
+                    ShareSync Admin
+                </div>
+            </header>
+
+            <div class="admin-content">
+                <section class="admin-welcome">
+                    <p class="admin-eyebrow">
+                        STUDENT HISTORY
+                    </p>
+                    <h1>
+                        Review Student Verification History
+                    </h1>
+                </section>
+
+                <section class="admin-queue">
+                    <div class="admin-student-table" id="studentHistoryTable">
+                        {% if students %}
+                            {% for student in students %}
+                                <div class="admin-student" data-student-id="{{ student.student_id }}">
+                                    <div class="admin-student-info">
+                                        <strong>{{ student.student_name }}</strong>
+                                        <span>{{ student.email }}</span>
+                                        <span>ID: {{ student.student_id }}</span>
+                                    </div>
+
+                                    <div class="admin-student-actions">
+                                        <span class="status-badge status-{{ student.verification_status | lower }}">
+                                            {{ student.verification_status }}
+                                        </span>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <p class="no-students">No student history available.</p>
+                        {% endif %}
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

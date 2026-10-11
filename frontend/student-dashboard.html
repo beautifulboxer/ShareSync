@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShareSync - Student Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+    <div class="student-dashboard">
+        <header class="student-header">
+            <div class="student-logo">Share<span>Sync</span></div>
+            <div class="student-header-right">
+                <div class="student-profile">
+                    <strong>Welcome, {{ student_name }}</strong>
+                    <span>Student ID: {{ student_id }}</span>
+                </div>
+                <a href="/student-logout" class="student-logout">Logout</a>
+            </div>
+        </header>
+
+        <main class="student-main">
+            <section class="student-welcome">
+                <p class="student-eyebrow">STUDENT DASHBOARD</p>
+                <h1>Welcome to ShareSync</h1>
+                <p>Post what you need, review a student&apos;s share offer, then confirm it to create the transaction.</p>
+            </section>
+
+            <p class="student-notice" id="studentNotice" role="status" aria-live="polite" hidden></p>
+
+            <section class="student-actions" aria-label="Student actions">
+                <div class="student-card">
+                    <h2>Request a Resource</h2>
+                    <p>Post a request for all students to see on the shared board.</p>
+                    <button type="button" id="borrowRequestBtn" aria-controls="borrowRequestPanel" aria-expanded="false">
+                        Create Request
+                    </button>
+                </div>
+                <div class="student-card">
+                    <h2>My Activity</h2>
+                    <p>Confirm an incoming share offer or track offers you sent and active transactions.</p>
+                    <button type="button" id="activityBtn" aria-controls="activityPanel" aria-expanded="false">
+                        View Activity
+                    </button>
+                </div>
+            </section>
+
+            <section class="student-panel" id="borrowRequestPanel" aria-labelledby="borrowRequestHeading" hidden>
+                <h2 id="borrowRequestHeading">Post a resource request</h2>
+                <form id="borrowRequestForm" class="student-form">
+                    <label for="borrowResourceName">What resource do you need?</label>
+                    <input id="borrowResourceName" name="resource_name" maxlength="150" required>
+                    <label for="borrowCategory">Category <span>(optional)</span></label>
+                    <input id="borrowCategory" name="category" maxlength="50">
+                    <label for="borrowDueDate">Expected return date</label>
+                    <input id="borrowDueDate" name="due_date" type="date" required>
+                    <label for="borrowDescription">Details <span>(optional)</span></label>
+                    <textarea id="borrowDescription" name="description" rows="3" maxlength="2000"></textarea>
+                    <div class="student-form-actions">
+                        <button type="submit">Post Request</button>
+                        <button type="button" class="student-secondary" data-close-panel>Cancel</button>
+                    </div>
+                </form>
+            </section>
+
+            <section class="student-section" aria-labelledby="requestBoardHeading">
+                <div class="student-section-heading">
+                    <div>
+                        <p class="student-eyebrow">COMMUNITY BOARD</p>
+                        <h2 id="requestBoardHeading">Open resource requests</h2>
+                    </div>
+                    <button type="button" class="student-secondary" id="refreshDashboardBtn">Refresh</button>
+                </div>
+                <div class="student-item-list" id="requestBoard" aria-live="polite"></div>
+            </section>
+
+            <section class="student-panel" id="activityPanel" aria-labelledby="activityHeading" hidden>
+                <h2 id="activityHeading">My activity</h2>
+                <div class="student-activity-columns">
+                    <div>
+                        <h3>Requests I posted</h3>
+                        <div class="student-item-list" id="myRequests"></div>
+                    </div>
+                    <div>
+                        <h3>Requests I accepted</h3>
+                        <div class="student-item-list" id="acceptedRequests"></div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+    <script src="{{ url_for('static', filename='student_dashboard.js') }}" defer></script>
+</body>
+
+</html>
