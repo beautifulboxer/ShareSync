@@ -16,7 +16,7 @@ const dashboardPanels = [
     document.getElementById("activityPanel")
 ];
 
-function showNotice(message, isError = false) {
+function  showNotice(message, isError = false) {
     studentNotice.textContent = message;
     studentNotice.classList.toggle("is-error", isError);
     studentNotice.hidden = false;
