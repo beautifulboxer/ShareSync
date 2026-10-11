@@ -212,7 +212,7 @@ async function  loadDashboard() {
     }
 }
 
-async function submitRequest (form) {
+async function  submitRequest (form) {
     const values = Object.fromEntries(new FormData(form).entries());
     const submitButton = form.querySelector ('button[type="submit"]');
     submitButton.disabled = true;
