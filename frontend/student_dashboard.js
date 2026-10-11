@@ -112,7 +112,7 @@ function  renderDashboard(data) {
             );
 
             if (!isOwnRequest) {
-                const acceptButton = document.createElement("button");
+                const  acceptButton = document.createElement("button");
                 acceptButton.type = "button";
                 acceptButton.className = "student-item-action";
                 acceptButton.textContent = "Offer to share";
