@@ -137,7 +137,7 @@ function  renderDashboard(data) {
         });
     }
 
-    const myRequests = document.getElementById("myRequests");
+    const  myRequests = document.getElementById("myRequests");
     myRequests.replaceChildren();
     if (!data.requests.length) {
         renderEmpty(myRequests, "You have not posted any requests yet.");
