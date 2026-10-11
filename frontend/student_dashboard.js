@@ -87,7 +87,7 @@ function  formatDate (value) {
     return value ? value.replace("T", " ").slice(0, 16) : "";
 }
 
-function formatDueDate (value) {
+function  formatDueDate (value) {
     return value ? value.slice(0, 10) : "not set";
 }
 function localDateString(date) {
