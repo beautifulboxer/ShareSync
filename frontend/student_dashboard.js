@@ -22,7 +22,7 @@ function  showNotice(message, isError = false) {
     studentNotice.hidden = false;
 }
 
-function togglePanel(panel, button) {
+function  togglePanel(panel, button) {
     const shouldOpen = panel.hidden;
     dashboardPanels.forEach((item) => {
         item.hidden = true;
