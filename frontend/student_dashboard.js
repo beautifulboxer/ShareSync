@@ -200,7 +200,7 @@ function renderDashboard(data) {
     }
 }
 
-async function loadDashboard() {
+async function  loadDashboard() {
     refreshDashboardBtn.disabled = true;
     try {
         const data = await apiRequest("/api/student-dashboard");
