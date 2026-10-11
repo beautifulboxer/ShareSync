@@ -98,7 +98,7 @@ function  localDateString(date) {
 }
 
 function  renderDashboard(data) {
-    const board = document.getElementById("requestBoard");
+    const  board = document.getElementById("requestBoard");
     board.replaceChildren();
     if (!data.board_requests.length) {
         renderEmpty(board, "There are no open requests yet. Post one if you need something.");
