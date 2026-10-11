@@ -53,7 +53,7 @@ async  function  apiRequest(url, options = {}) {
     return data;
 }
 
-function createItem(title, details, metadata) {
+function  createItem(title, details, metadata) {
     const item = document.createElement("article");
     item.className = "student-item";
 
