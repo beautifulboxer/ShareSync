@@ -1,7 +1,7 @@
-const borrowRequestBtn = document.getElementById("borrowRequestBtn");
-const activityBtn = document.getElementById("activityBtn");
-const refreshDashboardBtn = document.getElementById("refreshDashboardBtn");
-const studentNotice = document.getElementById("studentNotice");
+const  borrowRequestBtn = document.getElementById("borrowRequestBtn");
+const  activityBtn = document.getElementById("activityBtn");
+const  refreshDashboardBtn = document.getElementById("refreshDashboardBtn");
+const  studentNotice = document.getElementById("studentNotice");
 document.getElementById("borrowDueDate").min = localDateString(new Date());
 const dashboardPanels = [
     document.getElementById("borrowRequestPanel"),
