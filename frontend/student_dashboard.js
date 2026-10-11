@@ -83,7 +83,7 @@ function renderEmpty(container, message) {
 
 
 
-function formatDate (value) {
+function  formatDate (value) {
     return value ? value.replace("T", " ").slice(0, 16) : "";
 }
 
