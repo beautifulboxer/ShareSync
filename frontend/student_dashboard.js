@@ -1,16 +1,8 @@
-<<<<<<< HEAD
-const  borrowRequestBtn = document.getElementById("borrowRequestBtn");
-const  activityBtn = document.getElementById("activityBtn");
-const  refreshDashboardBtn = document.getElementById("refreshDashboardBtn");
-const  studentNotice = document.getElementById("studentNotice");
-document.getElementById("borrowDueDate").min = localDateString(new Date());
-=======
 const borrowRequestBtn = document. getElementById("borrowRequestBtn");
 const activityBtn = document.getElementById("activityBtn");
 const refreshDashboardBtn = document. getElementById("refreshDashboardBtn");
 const studentNotice = document.getElementById("studentNotice");
 document.getElementById ("borrowDueDate").min = localDateString(new Date());
->>>>>>> d9568ff28ff5196f736128a6a16b9b2dfc36e1d9
 const dashboardPanels = [
     document.getElementById("borrowRequestPanel"),
     document.getElementById("activityPanel")
