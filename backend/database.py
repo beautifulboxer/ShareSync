@@ -14,3 +14,16 @@ def get_db_connection():
     
 def get_db_cursor(connection):
     return connection.cursor(dictionary=True)
+
+def ensure_student_dashboard_tables(connection):
+    cursor = connection.cursor()
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS student_share_item_locks (
+            sharer_id INT NOT NULL,
+            item_key VARCHAR(300) NOT NULL,
+            PRIMARY KEY (sharer_id, item_key),
+            CONSTRAINT fk_share_item_lock_sharer FOREIGN KEY (sharer_id)
+            REFERENCES students(student_id) ON DELETE CASCADE
+        ) ENGINE=InnoDB
+    ''')
+    
