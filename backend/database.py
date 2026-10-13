@@ -62,3 +62,30 @@ def ensure_student_dashboard_tables(connection):
                     ON DELETE CASCADE
             ) ENGINE=InnoDB
         """)
+    
+    
+    cursor.execute("""
+            CREATE TABLE IF NOT EXISTS transactions (
+                transaction_id INT AUTO_INCREMENT PRIMARY KEY,
+                request_id INT NOT NULL,
+                offer_id INT NOT NULL,
+                borrower_id INT NOT NULL,
+                lender_id INT NOT NULL,
+                borrowed_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                due_date DATETIME NOT NULL,
+                returned_at DATETIME NULL,
+                transaction_status VARCHAR(20) NOT NULL DEFAULT 'ACTIVE',
+                CONSTRAINT fk_transaction_request
+                    FOREIGN KEY (request_id)
+                    REFERENCES borrow_requests(request_id),
+                CONSTRAINT fk_transaction_offer
+                    FOREIGN KEY (offer_id)
+                    REFERENCES resource_offers(offer_id),
+                CONSTRAINT fk_transaction_borrower
+                    FOREIGN KEY (borrower_id)
+                    REFERENCES students(student_id),
+                CONSTRAINT fk_transaction_lender
+                    FOREIGN KEY (lender_id)
+                    REFERENCES students(student_id)
+            ) ENGINE=InnoDB
+        """)
