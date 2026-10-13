@@ -11,3 +11,6 @@ def get_db_connection():
         password=os.getenv("MYSQL_PASSWORD"),
         database=os.getenv("MYSQL_DATABASE")
     )
+    
+def get_db_cursor(connection):
+    return connection.cursor(dictionary=True)
