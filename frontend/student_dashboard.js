@@ -86,7 +86,7 @@ function  localDateString(date) {
     const  year = date.getFullYear();
     const  month = String(date.getMonth() + 1).padStart(2, "0");
     const  day = String(date.getDate()).padStart(2, "0");
-    return ${year}-${month}-${day};
+    return `${year}-${month}-${day}`;
 }
 
 function  renderDashboard(data) {
@@ -100,7 +100,7 @@ function  renderDashboard(data) {
             const item = createItem(
                 request.resource_name,
                 request.description,
-                ${request.category ? `${request.category} - ` : ""}Requested by ${request.requester_name}${isOwnRequest ? " (you)" : ""} - Due ${formatDueDate(request.due_date)} - ${formatDate(request.created_at)}
+                `${request.category ? `${request.category} - ` : ""}Requested by ${request.requester_name}${isOwnRequest ? " (you)" : ""} - Due ${formatDueDate(request.due_date)} - ${formatDate(request.created_at)}`
             );
 
             if (!isOwnRequest) {
@@ -112,7 +112,7 @@ function  renderDashboard(data) {
                     acceptButton.disabled = true;
                     try {
                         const result = await apiRequest(
-                            /api/student-dashboard/requests/${request.request_id}/accept,
+                            `/api/student-dashboard/requests/${request.request_id}/accept`,
                             { method: "POST" }
                         );
                         showNotice(result.message);
@@ -139,12 +139,12 @@ function  renderDashboard(data) {
                 request.resource_name,
                 request.description,
                 request.transaction_id
-                    ? Share confirmed with ${request.accepted_by_name || "another student"}${request.accepted_by_email ? ` (${request.accepted_by_email}) : ""} - Transaction #${request.transaction_id} ${request.transaction_status} - Due ${formatDueDate(request.transaction_due_date)}`
+                    ? `Share confirmed with ${request.accepted_by_name || "another student"}${request.accepted_by_email ? ` (${request.accepted_by_email})` : ""} - Transaction #${request.transaction_id} ${request.transaction_status} - Due ${formatDueDate(request.transaction_due_date)}`
                     : request.request_status === "OFFERED"
-                        ? Share offer from ${request.accepted_by_name || "another student"} - Waiting for your confirmation - Due ${formatDueDate(request.due_date)}
+                        ? `Share offer from ${request.accepted_by_name || "another student"} - Waiting for your confirmation - Due ${formatDueDate(request.due_date)}`
                         : request.request_status === "UNAVAILABLE"
-                            ? Another borrower confirmed this item first - No transaction was created for this request
-                        : ${request.request_status} - Due ${formatDueDate(request.due_date)} - ${formatDate(request.created_at)}
+                            ? "Another borrower confirmed this item first - No transaction was created for this request"
+                        : `${request.request_status} - Due ${formatDueDate(request.due_date)} - ${formatDate(request.created_at)}`
             );
 
             if (request.request_status === "OFFERED") {
@@ -156,7 +156,7 @@ function  renderDashboard(data) {
                     confirmButton.disabled = true;
                     try {
                         const result = await apiRequest(
-                            /api/student-dashboard/requests/${request.request_id}/confirm-share,
+                            `/api/student-dashboard/requests/${request.request_id}/confirm-share`,
                             { method: "POST" }
                         );
                         showNotice(result.message);
@@ -183,10 +183,10 @@ function  renderDashboard(data) {
                 request.resource_name,
                 request.description,
                 request.transaction_id
-                    ? Transaction #${request.transaction_id} ${request.transaction_status} - Due ${formatDueDate(request.transaction_due_date)} - For ${request.requester_name}${request.requester_email ? ` (${request.requester_email}) : ""}`
+                    ? `Transaction #${request.transaction_id} ${request.transaction_status} - Due ${formatDueDate(request.transaction_due_date)} - For ${request.requester_name}${request.requester_email ? ` (${request.requester_email})` : ""}`
                     : request.offer_status === "Unavailable"
-                        ? Another borrower confirmed this item first - This share offer was not selected
-                        : Offer sent - Waiting for ${request.requester_name} to confirm - Expected return ${formatDueDate(request.due_date)}
+                        ? "Another borrower confirmed this item first - This share offer was not selected"
+                        : `Offer sent - Waiting for ${request.requester_name} to confirm - Expected return ${formatDueDate(request.due_date)}`
             ));
         });
     }
