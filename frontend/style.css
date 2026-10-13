@@ -83,6 +83,13 @@
     text-align: center;
 }
 
+.login-message {
+    margin: -16px 0 20px;
+    color: #f1a6a6;
+    font-size: 13px;
+    text-align: center;
+}
+
 .login-page .input-group {
     margin-bottom: 24px;
 }
