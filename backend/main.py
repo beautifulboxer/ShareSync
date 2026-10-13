@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 from flask import Flask, render_template, request, jsonify, session, redirect
 import mysql.connector
 from werkzeug.security  import  generate_password_hash,  check_password_hash
@@ -354,5 +353,3 @@ def admin_student_history():
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8000, debug=True)
-=======
->>>>>>> 03346bdc809e571f79780e860cb7adc7d41b05b4
