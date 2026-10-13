@@ -148,3 +148,17 @@ def ensure_student_dashboard_tables(connection):
                     REFERENCES students(student_id)
                     ON DELETE SET NULL
             """)
+            
+    cursor.execute("""
+            SHOW COLUMNS FROM student_resource_requests
+            LIKE 'borrow_request_id'
+        """)
+    if cursor.fetchone() is None:
+            cursor.execute("""
+                ALTER TABLE student_resource_requests
+                ADD COLUMN borrow_request_id INT NULL,
+                ADD CONSTRAINT fk_student_request_legacy
+                    FOREIGN KEY (borrow_request_id)
+                    REFERENCES borrow_requests(request_id)
+                    ON DELETE SET NULL
+            """)
