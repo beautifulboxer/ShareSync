@@ -116,21 +116,6 @@ def login():
                 "message": "Your account is not verified yet."
             }), 403
 
-        if user["role"] not in ("STUDENT", "ADMIN"):
-            return jsonify({
-                "success": False,
-                "message": "This account is not authorized to sign in."
-            }), 403
-
-        session.clear()
-        if user["role"] == "ADMIN":
-            session["admin_id"] = user["student_id"]
-            session["admin_role"] = user["role"]
-        else:
-            session["student_id"] = user["student_id"]
-            session["student_name"] = user["student_name"]
-            session["student_role"] = user["role"]
-
         return jsonify({
             "success": True,
             "message": "Welcome to ShareSync!",
