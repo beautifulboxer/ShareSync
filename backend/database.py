@@ -162,3 +162,26 @@ def ensure_student_dashboard_tables(connection):
                     REFERENCES borrow_requests(request_id)
                     ON DELETE SET NULL
             """)
+            
+    
+    cursor.execute("""
+            SHOW COLUMNS FROM student_resource_requests
+            LIKE 'due_date'
+        """)
+    if cursor.fetchone() is None:
+            cursor.execute("""
+                ALTER TABLE student_resource_requests
+                ADD COLUMN due_date DATE NULL
+            """)
+
+    cursor.execute("""
+            SHOW COLUMNS FROM resource_offers
+            LIKE 'share_item_key'
+        """)
+    if cursor.fetchone() is None:
+            cursor.execute("""
+                ALTER TABLE resource_offers
+                ADD COLUMN share_item_key VARCHAR(300) NULL
+            """)
+
+    connection.commit()
