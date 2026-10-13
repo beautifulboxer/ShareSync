@@ -89,3 +89,19 @@ def ensure_student_dashboard_tables(connection):
                     REFERENCES students(student_id)
             ) ENGINE=InnoDB
         """)
+    
+    
+    cursor.execute("""
+            CREATE TABLE IF NOT EXISTS student_resources (
+                resource_id INT AUTO_INCREMENT PRIMARY KEY,
+                student_id INT NOT NULL,
+                resource_name VARCHAR(150) NOT NULL,
+                description TEXT NOT NULL,
+                category VARCHAR(50) NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                CONSTRAINT fk_student_resource_owner
+                    FOREIGN KEY (student_id)
+                    REFERENCES students(student_id)
+                    ON DELETE CASCADE
+            ) ENGINE=InnoDB
+        """)
