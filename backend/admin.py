@@ -3,7 +3,7 @@ from flask import Blueprint, render_template, request, jsonify, session, redirec
 from database import get_db_connection, get_db_cursor
 
 
-admin_bp = Blueprint("admin", __name__)
+admin_bp  = Blueprint("admin", __name__)
 
 
 @admin_bp.route("/admin")
