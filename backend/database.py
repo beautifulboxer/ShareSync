@@ -184,4 +184,11 @@ def ensure_student_dashboard_tables(connection):
                 ADD COLUMN share_item_key VARCHAR(300) NULL
             """)
 
-    connection.commit()
+    try:
+        connection.commit()
+    except Exception:
+        connection.rollback()
+        raise
+    finally:
+        cursor.close()
+    
