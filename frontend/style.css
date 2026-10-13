@@ -1,3 +1,13 @@
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+}
 
 .login-page {
     min-height: calc(100vh - 60px);
@@ -1169,10 +1179,10 @@
     background: #111010;
 }
 
-/* .admin-breadcrumb {
+.admin-breadcrumb {
     color: #e1dcdc;
     font-size: 13px;
-} 
+}
 
 .admin-user {
     color: #ebe3e3;
@@ -1203,11 +1213,13 @@
     text-align: left;
 }
 
-/* .admin-welcome > p:last-child {
+/*
+.admin-welcome > p:last-child {
     margin-top: 9px;
     color: #a29f9f;
     font-size: 14px;
-} */
+}
+*/
 
 .admin-queue {
     overflow: hidden;
