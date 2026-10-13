@@ -58,9 +58,54 @@ async function reviewStudent(studentId, action, studentElement) {
                 noStudentsMessage.style.display = "block";
             }
         }
+
     } catch (error) {
         console.error(error);
         alert("Unable to connect to the server.");
     }
 }
 
+const adminLoginForm = document.getElementById("adminLoginForm");
+const adminLoginMessage = document.getElementById("adminLoginMessage");
+
+if (adminLoginForm && adminLoginMessage) {
+    adminLoginForm.addEventListener("submit", async function (event) {
+        event.preventDefault();
+        adminLoginMessage.hidden = true;
+
+        const submitButton = adminLoginForm.querySelector('button[type="submit"]');
+        if (submitButton) {
+            submitButton.disabled = true;
+        }
+
+        try {
+            const response = await fetch("/admin-login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    email: document.getElementById("adminEmail").value,
+                    password: document.getElementById("adminPassword").value
+                })
+            });
+            const data = await response.json();
+
+            if (!response.ok || !data.success) {
+                adminLoginMessage.textContent = data.message || "Admin sign in failed.";
+                adminLoginMessage.hidden = false;
+                return;
+            }
+
+            window.location.assign("/admin-dashboard");
+        } catch (error) {
+            console.error("Admin login failed:", error);
+            adminLoginMessage.textContent = "Unable to connect to the server. Please try again.";
+            adminLoginMessage.hidden = false;
+        } finally {
+            if (submitButton) {
+                submitButton.disabled = false;
+            }
+        }
+    });
+}
