@@ -134,4 +134,17 @@ def ensure_student_dashboard_tables(connection):
             ) ENGINE=InnoDB
         """) 
     
-    
+    # Add columns needed by older versions of the table.
+    cursor.execute("""
+            SHOW COLUMNS FROM student_resource_requests
+            LIKE 'accepted_by'
+        """)
+    if cursor.fetchone() is None:
+            cursor.execute("""
+                ALTER TABLE student_resource_requests
+                ADD COLUMN accepted_by INT NULL AFTER student_id,
+                ADD CONSTRAINT fk_student_request_acceptor
+                    FOREIGN KEY (accepted_by)
+                    REFERENCES students(student_id)
+                    ON DELETE SET NULL
+            """)
