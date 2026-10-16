@@ -1,11 +1,9 @@
 from threading import Lock
 import os
 import mysql.connector
-from threading import Lock
 
 student_request_lock = Lock()
 
-student_request_lock = Lock()
 
 def get_db_connection():
     return mysql.connector.connect(
