@@ -54,15 +54,15 @@ create table borrow_requests(
     -> description TEXT,
     -> offer_status varchar(20) not null default 'Available',
     -> offered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    -> Constraint fk_offer_request foreign key(request_id)
+    -> Constraint fk_offer_request Foreign Key(request_id)
     -> references borrow_requests(request_id)
-    -> on delete cascade
-    -> on update cascade,
+    -> ON DELETE CASCADE
+    -> ON UPDATE CASCADE,
     -> Constraint fk_offer_student FOREIGN KEY (student_id) REFERENCES students(student_id)
-    -> on delete cascade
-    -> on update cascade
+    -> ON DELETE CASCADE
+    -> ON UPDATE CASCADE
     -> )ENGINE =InnoDB;
-#Transactions table to s
+#Transactions table to store transactions 
     mysql> CREATE TABLE transactions (
     ->     transaction_id INT AUTO_INCREMENT PRIMARY KEY,
     ->     request_id INT NOT NULL,
