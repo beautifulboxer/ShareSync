@@ -47,10 +47,10 @@ create table borrow_requests(
     -> ) ENGINE =InnoDB;
 
     mysql> create table resource_offers(
-    -> offer_id int primary key,
-    -> request_id int not null,
-    -> student_id int not null,
-    -> resource_name varchar(150) not null,
+    -> offer_id INT PRIMARY KEY,
+    -> request_id INT NOT NULL,
+    -> student_id INT NOT NULL,
+    -> resource_name VARCHAR(150) NOT NULL,
     -> description TEXT,
     -> offer_status varchar(20) not null default 'Available',
     -> offered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
