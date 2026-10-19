@@ -104,8 +104,8 @@ mysql> create table fines (
     -> fine_status varchar(20) not null default 'UNPAID',
     -> Constraint fk_fine_transaction
     -> foreign key (transaction_id) references transactions(transaction_id)
-    -> on delete cascade
-    -> on update cascade
+    -> ON DELETE CASCADE
+    -> ON UPDATE CASCADE
     -> )ENGINE=InnoDB;
 
 
