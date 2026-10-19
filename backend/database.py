@@ -13,7 +13,7 @@ def get_db_connection():
         database=os.getenv("MYSQL_DATABASE")  #database to use 
     )
 
-
+#database cursor creation for retrieval and sending of queries 
 def get_db_cursor(connection):
     return connection.cursor(dictionary=True)
 
@@ -139,4 +139,5 @@ def ensure_student_dashboard_tables(connection):
             ADD COLUMN share_item_key VARCHAR(300) NULL
         ''')
     connection.commit()
+    #closing cursor 
     cursor.close()
