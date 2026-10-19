@@ -96,8 +96,8 @@ create table borrow_requests(
 
 mysql> create table fines (
     -> fine_id INT AUTO_INCREMENT PRIMARY KEY,
-    -> transaction_id int not null,
-    -> amount decimal(10,2) not null,
+    -> transaction_id INT NOT NULL,
+    -> amount decimal(10,2) NOT NULL,
     -> reason varchar(255),
     -> issued_at TIMESTAMP default current_timestamp,
     -> paid_at datetime null,
