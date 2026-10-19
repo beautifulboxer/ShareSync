@@ -43,7 +43,7 @@ create table borrow_requests(
     ->
     -> CONSTRAINT fk_request_student FOREIGN KEY (student_id) REFERENCES students(student_id)
     -> ON DELETE CASCADE
-    -> ON UPDATE cascade
+    -> ON UPDATE CASCADE 
     -> ) ENGINE =InnoDB;
 
     mysql> create table resource_offers(
