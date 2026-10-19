@@ -4,13 +4,13 @@ import mysql.connector
 
 student_request_lock = Lock()
 
-
+#Establishing connection with the database using connector
 def get_db_connection():
     return mysql.connector.connect(
-        host=os.getenv("MYSQL_HOST"),
-        user=os.getenv("MYSQL_USER"),
-        password=os.getenv("MYSQL_PASSWORD"),
-        database=os.getenv("MYSQL_DATABASE")
+        host=os.getenv("MYSQL_HOST"),  #host address
+        user=os.getenv("MYSQL_USER"),  #name of user 
+        password=os.getenv("MYSQL_PASSWORD"),  # users password 
+        database=os.getenv("MYSQL_DATABASE")  #database to use 
     )
 
 
