@@ -106,7 +106,7 @@ def ensure_os_tracking_schema(connection):
         cursor.close()
 
 
-def sync_os_deadlock_from_sharesync(connection):
+def sync_os_deadlock_from_sharesync (connection):
     """
     Synchronize ShareSync items and pending requests with the OS model.
     Ownership always mirrors the real ACTIVE transactions.
