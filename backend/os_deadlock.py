@@ -810,7 +810,7 @@ def _recover_one (connection, state, cycle):
     }
 
 
-def recover_os_deadlock(connection, requested_by=None) -> dict[str, Any]:
+def recover_os_deadlock (connection, requested_by=None) -> dict[str, Any]:
     """
     Recover from deadlock: repeatedly pick a victim from a cycle, abort its
     waiting request, preempt its blocking loan and reallocate the item to
