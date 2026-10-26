@@ -140,7 +140,7 @@
     }
 
     // Build the process display from the actual graph, waits and allocations.
-    function buildProcesses(graph = {}, resources = [], waits = []) {
+    function buildProcesses(graph = {}, resources = [], waits = [])  {
         const ids = new Set();
 
         Object.entries(graph).forEach(([id, owners]) => {
