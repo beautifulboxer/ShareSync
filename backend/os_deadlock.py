@@ -491,7 +491,7 @@ def detect_os_deadlock (connection) -> dict[str, Any]:
     }
 
 
-def _pick_victim(state, cycle):
+def _pick_victim (state, cycle):
     """
     Victim policy (minimum cost): the cycle member holding the fewest
     resources; ties go to the member with the newest waiting request.
