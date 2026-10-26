@@ -556,7 +556,7 @@ def _pick_victim (state, cycle):
     return victim_id, wait, resource, waiter_wait
 
 
-def _recover_one(connection, state, cycle):
+def _recover_one (connection, state, cycle):
     """Break one cycle: abort the victim's waiting request, preempt the
     victim's loan, and reallocate the freed item to the cycle member that
     was waiting for it (a new ACTIVE transaction with the same lender)."""
