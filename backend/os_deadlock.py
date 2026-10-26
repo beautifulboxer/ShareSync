@@ -428,7 +428,7 @@ def _find_current_deadlock(connection):
     return state, _find_cycle(state["graph"])
 
 
-def _acquire_lock(connection, timeout=10):
+def _acquire_lock (connection, timeout=10):
     cursor = connection.cursor()
     try:
         cursor.execute("SELECT GET_LOCK(%s, %s)", (_LOCK_NAME, timeout))
