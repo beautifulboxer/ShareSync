@@ -19,7 +19,7 @@ def _normalize(value):
     return " ".join((value or "").split()).casefold()
 
 
-def ensure_os_tracking_schema (connection):
+def ensure_os_tracking_schema(connection):
     """Create or migrate the OS tracking tables."""
     cursor = connection.cursor()
     try:
