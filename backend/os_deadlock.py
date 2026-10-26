@@ -383,7 +383,7 @@ def _load_state (connection) -> dict[str, Any]:
         cursor.close()
 
 
-def _find_cycle(graph: dict[int, list[int]]) -> list[int]:
+def _find_cycle (graph: dict[int, list[int]]) -> list[int]:
     """Return one cycle in the wait-for graph, or an empty list."""
     visited = set()
     active = set()
