@@ -1,6 +1,11 @@
+from dotenv import load_dotenv
+from pathlib import Path
+load_dotenv(Path(__file__).resolve().parent.parent / ".env")
+
 from threading import Lock
 import os
 import mysql.connector
+
 
 student_request_lock = Lock()
 
@@ -9,8 +14,10 @@ def get_db_connection():
     return mysql.connector.connect(
         host=os.getenv("MYSQL_HOST"),
         user=os.getenv("MYSQL_USER"),
+        port=os.getenv("MYSQL_PORT"),
         password=os.getenv("MYSQL_PASSWORD"),
-        database=os.getenv("MYSQL_DATABASE")
+        database=os.getenv("MYSQL_DATABASE"),
+        connection_timeout=10
     )
 
 
