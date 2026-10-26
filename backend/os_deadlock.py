@@ -448,7 +448,7 @@ def _release_lock(connection):
         pass
 
 
-def detect_os_deadlock(connection) -> dict[str, Any]:
+def detect_os_deadlock (connection) -> dict[str, Any]:
     """Synchronize ShareSync state, then detect deadlocks."""
     if not _acquire_lock(connection):
         return {
