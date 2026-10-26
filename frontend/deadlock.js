@@ -315,7 +315,7 @@
         setMessage(data.message || "Recovery result displayed.", "success");
     }
 
-    async function requestJson(url, options = {}) {
+    async function requestJson(url, options = {})  {
         const response = await fetch(url, {
             ...options,
             headers: {
