@@ -1,13 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ShareSync - Student Dashboard</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
-
 <body>
     <div class="student-dashboard">
         <header class="student-header">
@@ -20,16 +18,13 @@
                 <a href="/student-logout" class="student-logout">Logout</a>
             </div>
         </header>
-
         <main class="student-main">
             <section class="student-welcome">
                 <p class="student-eyebrow">STUDENT DASHBOARD</p>
                 <h1>Welcome to ShareSync</h1>
                 <p>Post what you need, review a student&apos;s share offer, then confirm it to create the transaction.</p>
             </section>
-
             <p class="student-notice" id="studentNotice" role="status" aria-live="polite" hidden></p>
-
             <section class="student-actions" aria-label="Student actions">
                 <div class="student-card">
                     <h2>Request a Resource</h2>
@@ -46,7 +41,6 @@
                     </button>
                 </div>
             </section>
-
             <section class="student-panel" id="borrowRequestPanel" aria-labelledby="borrowRequestHeading" hidden>
                 <h2 id="borrowRequestHeading">Post a resource request</h2>
                 <form id="borrowRequestForm" class="student-form">
@@ -64,7 +58,6 @@
                     </div>
                 </form>
             </section>
-
             <section class="student-section" aria-labelledby="requestBoardHeading">
                 <div class="student-section-heading">
                     <div>
@@ -75,7 +68,6 @@
                 </div>
                 <div class="student-item-list" id="requestBoard" aria-live="polite"></div>
             </section>
-
             <section class="student-panel" id="activityPanel" aria-labelledby="activityHeading" hidden>
                 <h2 id="activityHeading">My activity</h2>
                 <div class="student-activity-columns">
@@ -89,9 +81,85 @@
                     </div>
                 </div>
             </section>
+            <!-- OS Deadlock Simulation -->
+            <section class="deadlock-section" id="deadlockSection">
+                <div class="deadlock-heading">
+                    <div>
+                        <p class="student-eyebrow">OPERATING SYSTEMS</p>
+                        <h2>Deadlock Detection &amp; Recovery</h2>
+                        <p class="deadlock-subtitle">
+                            Explore circular wait, resource allocation, and recovery
+                            using real ShareSync request records.
+                        </p>
+                    </div>
+                    <span class="deadlock-tag">OS SIMULATION</span>
+                </div>
+                <div class="deadlock-actions">
+                    <button type="button" id="detectDeadlockBtn">
+                        Detect Deadlock
+                    </button>
+                    <button type="button" id="recoverDeadlockBtn" disabled>
+                        Recover Deadlock
+                    </button>
+                </div>
+                <p id="deadlockMessage" class="deadlock-message" role="status"
+                   aria-live="polite">
+                    Select Detect Deadlock to run the simulation.
+                </p>
+                <div id="deadlockResults" hidden>
+                    <div class="deadlock-stats">
+                        <article class="deadlock-stat">
+                            <span>Database source</span>
+                            <strong id="deadlockSource">—</strong>
+                        </article>
+                        <article class="deadlock-stat">
+                            <span>Deadlock status</span>
+                            <strong id="deadlockStatus">—</strong>
+                        </article>
+                        <article class="deadlock-stat">
+                            <span>Recovery method</span>
+                            <strong id="deadlockMethod">—</strong>
+                        </article>
+                    </div>
+                    <h3 class="deadlock-subheading">Processes involved</h3>
+                    <div id="deadlockProcesses" class="deadlock-process-grid"></div>
+                    <h3 class="deadlock-subheading">Wait-for graph</h3>
+                    <div class="deadlock-graph-panel">
+                        <p class="deadlock-graph-caption">
+                            An arrow from one process to another means the first
+                            process is waiting for a resource held by the second.
+                        </p>
+                        <div id="deadlockGraph" class="deadlock-graph"></div>
+                        <p id="deadlockCycle" class="deadlock-cycle"></p>
+                    </div>
+                    <h3 class="deadlock-subheading">Resource allocation before recovery</h3>
+                    <div id="deadlockResourcesBefore"
+                         class="deadlock-resource-grid"></div>
+                    <div class="deadlock-recovery-panel" id="deadlockRecoveryPanel" hidden>
+                        <h3>Recovery result</h3>
+                        <p id="deadlockRecoverySummary"></p>
+                        <h3 class="deadlock-subheading">Process states after recovery</h3>
+                        <div id="deadlockProcessesAfter"
+                             class="deadlock-process-grid"></div>
+                        <h3 class="deadlock-subheading">Resource allocation after recovery</h3>
+                        <div id="deadlockResourcesAfter"
+                             class="deadlock-resource-grid"></div>
+                        <h3 class="deadlock-subheading">Wait-for graph after recovery</h3>
+                        <div id="deadlockGraphAfter" class="deadlock-graph"></div>
+                        <p id="deadlockFinalStatus" class="deadlock-final-status"></p>
+                    </div>
+                    <p class="deadlock-disclaimer">
+                        Detection reads real ShareSync students, loans, and open
+                        requests; only the OS tracking tables are refreshed.
+                        Recovery is real: it cancels the victim's waiting request,
+                        ends the victim's blocking loan, and reallocates that item
+                        to the student who was waiting for it.
+                    </p>
+                </div>
+            </section>
         </main>
     </div>
-    <script src="{{ url_for('static', filename='student_dashboard.js') }}" defer></script>
+<script src="{{ url_for('static', filename='student_dashboard.js') }}" defer></script>
+<script src="{{ url_for('static', filename='deadlock.js') }}" defer></script>
 </body>
-
 </html>
