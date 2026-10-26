@@ -250,7 +250,7 @@
         if (results) results.hidden = false;
     }
 
-    function renderRecovery(data) {
+    function renderRecovery(data)  {
         const panel = document.getElementById("deadlockRecoveryPanel");
         if (panel) panel.hidden = false;
 
