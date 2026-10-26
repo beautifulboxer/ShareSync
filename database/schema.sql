@@ -43,26 +43,26 @@ create table borrow_requests(
     ->
     -> CONSTRAINT fk_request_student FOREIGN KEY (student_id) REFERENCES students(student_id)
     -> ON DELETE CASCADE
-    -> ON UPDATE cascade
+    -> ON UPDATE CASCADE 
     -> ) ENGINE =InnoDB;
 
     mysql> create table resource_offers(
-    -> offer_id int primary key,
-    -> request_id int not null,
-    -> student_id int not null,
-    -> resource_name varchar(150) not null,
+    -> offer_id INT PRIMARY KEY,
+    -> request_id INT NOT NULL,
+    -> student_id INT NOT NULL,
+    -> resource_name VARCHAR(150) NOT NULL,
     -> description TEXT,
     -> offer_status varchar(20) not null default 'Available',
     -> offered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    -> Constraint fk_offer_request foreign key(request_id)
+    -> Constraint fk_offer_request Foreign Key(request_id)
     -> references borrow_requests(request_id)
-    -> on delete cascade
-    -> on update cascade,
+    -> ON DELETE CASCADE
+    -> ON UPDATE CASCADE,
     -> Constraint fk_offer_student FOREIGN KEY (student_id) REFERENCES students(student_id)
-    -> on delete cascade
-    -> on update cascade
+    -> ON DELETE CASCADE
+    -> ON UPDATE CASCADE
     -> )ENGINE =InnoDB;
-#Transactions table to s
+#Transactions table to store transactions 
     mysql> CREATE TABLE transactions (
     ->     transaction_id INT AUTO_INCREMENT PRIMARY KEY,
     ->     request_id INT NOT NULL,
@@ -96,16 +96,16 @@ create table borrow_requests(
 
 mysql> create table fines (
     -> fine_id INT AUTO_INCREMENT PRIMARY KEY,
-    -> transaction_id int not null,
-    -> amount decimal(10,2) not null,
+    -> transaction_id INT NOT NULL,
+    -> amount decimal(10,2) NOT NULL,
     -> reason varchar(255),
     -> issued_at TIMESTAMP default current_timestamp,
     -> paid_at datetime null,
     -> fine_status varchar(20) not null default 'UNPAID',
     -> Constraint fk_fine_transaction
     -> foreign key (transaction_id) references transactions(transaction_id)
-    -> on delete cascade
-    -> on update cascade
+    -> ON DELETE CASCADE
+    -> ON UPDATE CASCADE
     -> )ENGINE=InnoDB;
 
 
