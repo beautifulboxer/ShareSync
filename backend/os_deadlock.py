@@ -271,7 +271,7 @@ def sync_os_deadlock_from_sharesync (connection):
         cursor.close()
 
 
-def _load_state(connection) -> dict[str, Any]:
+def _load_state (connection) -> dict[str, Any]:
     """Read resources, waits, and the wait-for graph."""
     cursor = connection.cursor(dictionary=True)
 
