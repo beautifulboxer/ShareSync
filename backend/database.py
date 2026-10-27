@@ -11,7 +11,7 @@ student_request_lock = Lock()
 
 #Establishing connection with the database using connector
 def get_db_connection():
-    return mysql.connector.connect(
+    return mysql.connector.connect (
         host=os.getenv("MYSQL_HOST"),
         user=os.getenv("MYSQL_USER"),
         port=os.getenv("MYSQL_PORT"),
