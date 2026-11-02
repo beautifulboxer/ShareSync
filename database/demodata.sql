@@ -88,7 +88,7 @@ JOIN students AS borrower ON borrower.student_id = t.borrower_id
 JOIN students AS lender ON lender.student_id = t.lender_id
 ORDER BY t.borrowed_at DESC;
 
--- Check for duplicate active transactions per sharer and normalized item key.
+-- Checking for duplicate active transactions per sharer and normalized item key.
 -- This query should return no rows to prove successful otherwise a failure .
 SELECT o.student_id AS sharer_id, o.share_item_key,
        COUNT(*) AS active_transactions
