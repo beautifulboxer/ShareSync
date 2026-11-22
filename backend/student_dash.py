@@ -7,14 +7,50 @@ from database import (
     ensure_student_dashboard_tables,
     student_request_lock
 )
-from os_deadlock import detect_os_deadlock, recover_os_deadlock
-
+from os_deadlock import (
+    detect_os_deadlock,
+    recover_os_deadlock,
+    get_os_deadlock_history
+)
 student_dashboard_bp = Blueprint(
     "student_dashboard",
     __name__
 )
-
-
+# Late-fee rate (rupees) charged for every day a loan is returned after its due date.
+LATE_FEE_PER_DAY = 5
+def ensure_review_fee_tables(connection):
+    """Create the late-fee and review tables if they do not exist yet."""
+    cursor = connection.cursor()
+    try:
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS transaction_fees (
+                transaction_id INT PRIMARY KEY,
+                late_days INT NOT NULL,
+                fee_amount INT NOT NULL,
+                computed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            ) ENGINE=InnoDB
+        ''')
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS transaction_reviews (
+                review_id INT AUTO_INCREMENT PRIMARY KEY,
+                transaction_id INT NOT NULL,
+                reviewer_id INT NOT NULL,
+                reviewee_id INT NOT NULL,
+                rating TINYINT NOT NULL,
+                comment VARCHAR(500) NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                UNIQUE KEY uq_review_once (transaction_id, reviewer_id)
+            ) ENGINE=InnoDB
+        ''')
+        connection.commit()
+    finally:
+        cursor.close()
+def late_days_for(due_value, on_date=None):
+    """Whole days between the due date and today (0 if not late or no date)."""
+    if not due_value:
+        return 0
+    due = date.fromisoformat(str(due_value)[:10])
+    return max(0, ((on_date or date.today()) - due).days)
 @student_dashboard_bp.route("/student-dashboard")
 def student_dashboard():
     if "student_id" not in session:
@@ -26,23 +62,20 @@ def student_dashboard():
         student_name=session.get("student_name"),
         student_id=session.get("student_id")
     )
-
-
 def is_student_session():
     return 'student_id' in session and session.get('student_role') == 'STUDENT'
-
-
 @student_dashboard_bp.route('/api/student-dashboard/os-deadlock', methods=['GET'])
 def detect_deadlock_api():
     """Detect deadlock. Only the OS tracking tables are refreshed; no loans or requests change."""
     if not is_student_session():
         return jsonify({'success': False, 'message': 'Student login required.'}), 401
-
     connection = None
     try:
         connection = get_db_connection()
         ensure_student_dashboard_tables(connection)
-        result = detect_os_deadlock(connection)
+        result = detect_os_deadlock(
+            connection, requested_by=session['student_id']
+        )
         status_code = 200 if result.get('success') else 400
         return jsonify(result), status_code
     except Exception as error:
@@ -56,20 +89,21 @@ def detect_deadlock_api():
     finally:
         if connection:
             connection.close()
-
-
 @student_dashboard_bp.route('/api/student-dashboard/os-deadlock/recover', methods=['POST'])
 def recover_deadlock_api():
     """Recover deadlock: cancel victim request, end victim loan, reallocate item to the waiter."""
     if not is_student_session():
         return jsonify({'success': False, 'message': 'Student login required.'}), 401
-
     connection = None
     try:
         connection = get_db_connection()
         ensure_student_dashboard_tables(connection)
+        body = request.get_json(silent=True)
+        policy = body.get('policy') if isinstance(body, dict) else None
         result = recover_os_deadlock(
-            connection, requested_by=session['student_id']
+            connection,
+            requested_by=session['student_id'],
+            policy=policy
         )
         status_code = 200 if result.get('success') else 400
         return jsonify(result), status_code
@@ -84,22 +118,184 @@ def recover_deadlock_api():
     finally:
         if connection:
             connection.close()
-
-
-def normalize_share_item_name(resource_name):
-    return ' '.join(resource_name.split()).casefold()
-
-
-@student_dashboard_bp.route('/api/student-dashboard', methods=['GET'])
-def student_dashboard_data():
+@student_dashboard_bp.route('/api/student-dashboard/os-deadlock/history', methods=['GET'])
+def deadlock_history_api():
+    """Return the latest deadlock detections and recoveries."""
     if not is_student_session():
         return jsonify({'success': False, 'message': 'Student login required.'}), 401
-
+    connection = None
+    try:
+        connection = get_db_connection()
+        ensure_student_dashboard_tables(connection)
+        return jsonify(get_os_deadlock_history(connection, limit=20))
+    except Exception as error:
+        print('OS deadlock history error:', error)
+        return jsonify({
+            'success': False,
+            'message': 'Unable to load deadlock history.'
+        }), 500
+    finally:
+        if connection:
+            connection.close()
+@student_dashboard_bp.route('/api/student-dashboard/transactions/<int:transaction_id>/return', methods=['POST'])
+def return_student_transaction(transaction_id):
+    """Mark an ACTIVE transaction as returned (borrower or lender) and record any late fee."""
+    if not is_student_session():
+        return jsonify({'success': False, 'message': 'Student login required.'}), 401
     connection = None
     cursor = None
     try:
         connection = get_db_connection()
         ensure_student_dashboard_tables(connection)
+        ensure_review_fee_tables(connection)
+        cursor = get_db_cursor(connection)
+        with student_request_lock:
+            cursor.execute('''
+                SELECT transaction_id, borrower_id, lender_id, transaction_status, due_date
+                FROM transactions
+                WHERE transaction_id = %s
+                FOR UPDATE
+            ''', (transaction_id,))
+            transaction = cursor.fetchone()
+            if transaction is None:
+                return jsonify({'success': False, 'message': 'Transaction not found.'}), 404
+            if session['student_id'] not in (
+                transaction['borrower_id'], transaction['lender_id']
+            ):
+                return jsonify({
+                    'success': False,
+                    'message': 'Only the borrower or the lender can mark this item as returned.'
+                }), 403
+            if transaction['transaction_status'] != 'ACTIVE':
+                return jsonify({
+                    'success': False,
+                    'message': 'This transaction is not active.'
+                }), 409
+            cursor.execute('''
+                UPDATE transactions
+                SET transaction_status = 'RETURNED', returned_at = NOW()
+                WHERE transaction_id = %s AND transaction_status = 'ACTIVE'
+            ''', (transaction_id,))
+            if cursor.rowcount != 1:
+                connection.rollback()
+                return jsonify({
+                    'success': False,
+                    'message': 'This transaction is not active.'
+                }), 409
+            late_days = late_days_for(transaction['due_date'])
+            late_fee = late_days * LATE_FEE_PER_DAY
+            if late_days > 0:
+                cursor.execute('''
+                    INSERT INTO transaction_fees (transaction_id, late_days, fee_amount)
+                    VALUES (%s, %s, %s)
+                ''', (transaction_id, late_days, late_fee))
+            connection.commit()
+        message = f'Transaction #{transaction_id} was marked as returned.'
+        if late_days > 0:
+            message += f' Returned {late_days} day(s) late: late fee Rs. {late_fee}.'
+        return jsonify({
+            'success': True,
+            'message': message,
+            'late_days': late_days,
+            'late_fee': late_fee
+        })
+    except Exception as error:
+        print('Student return error:', error)
+        if connection:
+            connection.rollback()
+        return jsonify({
+            'success': False,
+            'message': 'Unable to mark this item as returned.'
+        }), 500
+    finally:
+        if cursor:
+            cursor.close()
+        if connection:
+            connection.close()
+@student_dashboard_bp.route('/api/student-dashboard/transactions/<int:transaction_id>/review', methods=['POST'])
+def review_student_transaction(transaction_id):
+    """Let the borrower or lender review the other student after a return."""
+    if not is_student_session():
+        return jsonify({'success': False, 'message': 'Student login required.'}), 401
+    data = request.get_json(silent=True)
+    if not isinstance(data, dict):
+        return jsonify({'success': False, 'message': 'A valid review is required.'}), 400
+    try:
+        rating = int(data.get('rating'))
+    except (TypeError, ValueError):
+        return jsonify({'success': False, 'message': 'Rating must be a number from 1 to 5.'}), 400
+    comment = data.get('comment', '')
+    if not 1 <= rating <= 5:
+        return jsonify({'success': False, 'message': 'Rating must be a number from 1 to 5.'}), 400
+    if not isinstance(comment, str) or len(comment.strip()) > 500:
+        return jsonify({'success': False, 'message': 'Comment must be 500 characters or fewer.'}), 400
+    connection = None
+    cursor = None
+    try:
+        connection = get_db_connection()
+        ensure_student_dashboard_tables(connection)
+        ensure_review_fee_tables(connection)
+        cursor = get_db_cursor(connection)
+        cursor.execute('''
+            SELECT borrower_id, lender_id, transaction_status
+            FROM transactions
+            WHERE transaction_id = %s
+        ''', (transaction_id,))
+        transaction = cursor.fetchone()
+        if transaction is None:
+            return jsonify({'success': False, 'message': 'Transaction not found.'}), 404
+        me = session['student_id']
+        if me not in (transaction['borrower_id'], transaction['lender_id']):
+            return jsonify({
+                'success': False,
+                'message': 'Only the borrower or the lender can review this transaction.'
+            }), 403
+        if transaction['transaction_status'] != 'RETURNED':
+            return jsonify({
+                'success': False,
+                'message': 'You can leave a review after the item is returned.'
+            }), 409
+        reviewee = (
+            transaction['lender_id']
+            if me == transaction['borrower_id']
+            else transaction['borrower_id']
+        )
+        cursor.execute('''
+            INSERT INTO transaction_reviews
+                (transaction_id, reviewer_id, reviewee_id, rating, comment)
+            VALUES (%s, %s, %s, %s, %s)
+        ''', (transaction_id, me, reviewee, rating, comment.strip()))
+        connection.commit()
+        return jsonify({'success': True, 'message': 'Thanks! Your review was saved.'})
+    except mysql.connector.IntegrityError:
+        if connection:
+            connection.rollback()
+        return jsonify({
+            'success': False,
+            'message': 'You have already reviewed this transaction.'
+        }), 409
+    except Exception as error:
+        print('Student review error:', error)
+        if connection:
+            connection.rollback()
+        return jsonify({'success': False, 'message': 'Unable to save this review.'}), 500
+    finally:
+        if cursor:
+            cursor.close()
+        if connection:
+            connection.close()
+def normalize_share_item_name(resource_name):
+    return ' '.join(resource_name.split()).casefold()
+@student_dashboard_bp.route('/api/student-dashboard', methods=['GET'])
+def student_dashboard_data():
+    if not is_student_session():
+        return jsonify({'success': False, 'message': 'Student login required.'}), 401
+    connection = None
+    cursor = None
+    try:
+        connection = get_db_connection()
+        ensure_student_dashboard_tables(connection)
+        ensure_review_fee_tables(connection)
         cursor = get_db_cursor(connection)
         cursor.execute('''
             SELECT q.request_id, q.student_id, q.resource_name, q.description,
@@ -118,7 +314,6 @@ def student_dashboard_data():
             }
             for row in cursor.fetchall()
         ]
-
         cursor.execute('''
             SELECT q.request_id, q.resource_name, q.description, q.category,
                    q.due_date, q.request_status, q.created_at,
@@ -148,7 +343,6 @@ def student_dashboard_data():
             }
             for row in cursor.fetchall()
         ]
-
         cursor.execute('''
             SELECT q.request_id, q.resource_name, q.description, q.category,
                    q.due_date, q.request_status, q.created_at,
@@ -178,15 +372,62 @@ def student_dashboard_data():
             }
             for row in cursor.fetchall()
         ]
-
+        transaction_rows = requests + accepted_requests
+        transaction_ids = {
+            row['transaction_id']
+            for row in transaction_rows
+            if row.get('transaction_id')
+        }
+        fees = {}
+        reviewed = set()
+        if transaction_ids:
+            marks = ', '.join(['%s'] * len(transaction_ids))
+            cursor.execute(f'''
+                SELECT transaction_id, late_days, fee_amount
+                FROM transaction_fees
+                WHERE transaction_id IN ({marks})
+            ''', tuple(transaction_ids))
+            fees = {row['transaction_id']: row for row in cursor.fetchall()}
+            cursor.execute(f'''
+                SELECT transaction_id
+                FROM transaction_reviews
+                WHERE reviewer_id = %s AND transaction_id IN ({marks})
+            ''', (session['student_id'], *transaction_ids))
+            reviewed = {row['transaction_id'] for row in cursor.fetchall()}
+        for row in transaction_rows:
+            tx_id = row.get('transaction_id')
+            if not tx_id:
+                continue
+            row['already_reviewed'] = tx_id in reviewed
+            if row.get('transaction_status') == 'ACTIVE':
+                days = late_days_for(row.get('transaction_due_date'))
+                row['late_days'] = days
+                row['late_fee'] = days * LATE_FEE_PER_DAY
+            elif tx_id in fees:
+                row['late_days'] = fees[tx_id]['late_days']
+                row['late_fee'] = fees[tx_id]['fee_amount']
+        cursor.execute('''
+            SELECT COUNT(*) AS review_count, AVG(rating) AS average_rating
+            FROM transaction_reviews
+            WHERE reviewee_id = %s
+        ''', (session['student_id'],))
+        summary = cursor.fetchone()
+        my_rating = {
+            'count': summary['review_count'],
+            'average': (
+                round(float(summary['average_rating']), 2)
+                if summary['average_rating'] is not None else None
+            )
+        }
         return jsonify({
             'success': True,
             'student_id': session['student_id'],
             'board_requests': board_requests,
             'requests': requests,
-            'accepted_requests': accepted_requests
+            'accepted_requests': accepted_requests,
+            'my_rating': my_rating,
+            'late_fee_per_day': LATE_FEE_PER_DAY
         })
-
     except Exception as error:
         print('Student dashboard load error:', error)
         return jsonify({'success': False, 'message': 'Unable to load dashboard data.'}), 500
@@ -195,22 +436,17 @@ def student_dashboard_data():
             cursor.close()
         if connection:
             connection.close()
-
-
 @student_dashboard_bp.route('/api/student-dashboard/requests', methods=['POST'])
 def create_student_resource_request():
     if not is_student_session():
         return jsonify({'success': False, 'message': 'Student login required.'}), 401
-
     data = request.get_json(silent=True)
     if not isinstance(data, dict):
         return jsonify({'success': False, 'message': 'A valid borrow request is required.'}), 400
-
     resource_name = data.get('resource_name', '')
     description = data.get('description', '')
     category = data.get('category', '')
     due_date_value = data.get('due_date', '')
-
     if not isinstance(resource_name, str) or len(resource_name.strip()) > 150:
         return jsonify({'success': False, 'message': 'Resource name must be 150 characters or fewer.'}), 400
     if not isinstance(description, str) or len(description.strip()) > 2000:
@@ -227,7 +463,6 @@ def create_student_resource_request():
         return jsonify({'success': False, 'message': 'Due date must be today or later.'}), 400
     if not resource_name.strip():
         return jsonify({'success': False, 'message': 'Resource name is required.'}), 400
-
     connection = None
     cursor = None
     try:
@@ -257,8 +492,6 @@ def create_student_resource_request():
             cursor.close()
         if connection:
             connection.close()
-
-
 @student_dashboard_bp.route('/api/student-dashboard/requests/<int:request_id>/due-date', methods=['POST'])
 def update_student_request_due_date(request_id):
     if not is_student_session():
@@ -309,8 +542,6 @@ def update_student_request_due_date(request_id):
             cursor.close()
         if connection:
             connection.close()
-
-
 @student_dashboard_bp.route('/api/student-dashboard/requests/<int:request_id>/accept', methods=['POST'])
 def accept_student_request(request_id):
     if not is_student_session():
@@ -420,8 +651,6 @@ def accept_student_request(request_id):
             cursor.close()
         if connection:
             connection.close()
-
-
 @student_dashboard_bp.route('/api/student-dashboard/requests/<int:request_id>/confirm-share', methods=['POST'])
 def confirm_student_share(request_id):
     if not is_student_session():

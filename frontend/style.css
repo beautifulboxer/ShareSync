@@ -1846,3 +1846,211 @@ body {
     }
 }
 
+
+/* Same font for every button and dropdown */
+.student-form-actions button,
+.student-item-action,
+.student-secondary,
+.deadlock-actions button,
+.deadlock-history-refresh {
+    font-family: inherit;
+}
+
+/* Deadlock: victim policy selector, visual graph and history */
+.deadlock-actions {
+    align-items: center;
+}
+
+.deadlock-policy {
+    display: flex;
+    align-items: stretch;
+    min-height: 42px;
+    overflow: hidden;
+    border: 1px solid #a45c5c;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #403434, #a45c5c);
+    color: #ffffff;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.deadlock-policy:hover {
+    transform: translateY(-2px);
+}
+
+.deadlock-policy:focus-within {
+    outline: 2px solid #f0b4b4;
+    outline-offset: 2px;
+}
+
+.deadlock-policy-label {
+    display: flex;
+    align-items: center;
+    padding: 0 14px;
+    border-right: 1px solid rgba(255, 255, 255, 0.3);
+    white-space: nowrap;
+}
+
+.deadlock-policy select {
+    min-height: 40px;
+    padding: 0 40px 0 14px;
+    border: 0;
+    outline: 0;
+    border-radius: 0;
+    background: transparent url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 14px center;
+    color: #ffffff;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+.deadlock-policy select option {
+    background: #191617;
+    color: #ffffff;
+    font-weight: 400;
+}
+
+.deadlock-graph-visual {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 14px;
+    overflow-x: auto;
+}
+
+.deadlock-graph-visual svg {
+    width: 100%;
+    max-width: 640px;
+    height: auto;
+}
+
+.deadlock-history-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 30px;
+}
+
+.deadlock-history-refresh {
+    padding: 8px 14px;
+    border: 1px solid #a45c5c;
+    border-radius: 8px;
+    background: transparent;
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+@media (max-width: 700px) {
+    .deadlock-policy {
+        flex: 1 1 100%;
+    }
+}
+
+/* Rating badge and loan detail boxes (late fee, review) */
+.student-rating-badge {
+    display: inline-block;
+    margin: 6px 0 4px;
+    padding: 7px 14px;
+    border: 1px solid #a45c5c;
+    border-radius: 999px;
+    background: #161314;
+    color: #f0e6e6;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.student-item-details {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 10px;
+    margin: 4px 0 14px;
+}
+
+.student-detail-box {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+    padding: 12px 14px;
+    border: 1px solid #30282b;
+    border-radius: 8px;
+    background: #161314;
+}
+
+.student-detail-label {
+    color: #999398;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.student-detail-value {
+    color: #ffffff;
+    font-size: 16px;
+}
+
+.student-detail-sub {
+    color: #999398;
+    font-size: 11px;
+    line-height: 1.4;
+}
+
+.student-detail-box.is-late {
+    border-color: #a45c5c;
+    background: #1d1414;
+}
+
+.student-detail-box.is-late .student-detail-value {
+    color: #f0b4b4;
+}
+
+.student-detail-box.is-ok .student-detail-value {
+    color: #9fd6a8;
+}
+
+.student-detail-box .student-item-action {
+    align-self: flex-start;
+    margin-top: 8px;
+}
+
+.student-review-form {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.student-review-form select,
+.student-review-form input {
+    padding: 9px;
+    border: 1px solid #4b4242;
+    border-radius: 7px;
+    background: #0b0b0b;
+    color: #ffffff;
+    font-family: inherit;
+    font-size: 12px;
+}
+
+.student-review-form select {
+    padding-right: 34px;
+    background: #0b0b0b url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 12px center;
+    cursor: pointer;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+.student-review-form select option {
+    background: #191617;
+    color: #ffffff;
+}
