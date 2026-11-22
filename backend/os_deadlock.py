@@ -1,5 +1,6 @@
 """ ShareSync-integrated deadlock detection and safe recovery """
 
+import random
 from datetime import date, timedelta
 from typing import Any
 
@@ -14,9 +15,24 @@ _MAX_RECOVERY_ROUNDS = 20
 # Left False so any logged-in student can demonstrate the feature.
 RESTRICT_RECOVERY_TO_PARTICIPANTS = False
 
+# Victim selection policies offered in the UI (key -> label).
+VICTIM_POLICIES = {
+    "fewest_held": "Fewest held items (minimum cost)",
+    "newest_request": "Newest waiting request",
+    "lowest_id": "Lowest student ID",
+    "highest_id": "Highest student ID",
+    "random": "Random member of the cycle",
+}
+DEFAULT_POLICY = "fewest_held"
+
 
 def _normalize(value):
     return " ".join((value or "").split()).casefold()
+
+
+def normalize_policy(policy) -> str:
+    """Return a valid policy key (falls back to the default policy)."""
+    return policy if policy in VICTIM_POLICIES else DEFAULT_POLICY
 
 
 def ensure_os_tracking_schema(connection):
@@ -59,7 +75,7 @@ def ensure_os_tracking_schema(connection):
             ) ENGINE=InnoDB
         """)
 
-        # Persist OS-simulation releases across synchronization.
+        # Legacy table (no longer used by recovery, kept for old databases).
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS os_recovery_releases (
                 sharer_id INT NOT NULL,
@@ -67,6 +83,24 @@ def ensure_os_tracking_schema(connection):
                 released_transaction_id INT NOT NULL,
                 recovered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 PRIMARY KEY (sharer_id, share_item_key)
+            ) ENGINE=InnoDB
+        """)
+
+        # Audit log of every detected deadlock and every recovery.
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS os_deadlock_history (
+                history_id INT AUTO_INCREMENT PRIMARY KEY,
+                event_type VARCHAR(20) NOT NULL,
+                cycle_text VARCHAR(255) NULL,
+                policy VARCHAR(30) NULL,
+                victim_student_id INT NULL,
+                victim_name VARCHAR(100) NULL,
+                cancelled_request_ids VARCHAR(255) NULL,
+                item_name VARCHAR(150) NULL,
+                reallocated_to_name VARCHAR(100) NULL,
+                new_transaction_id INT NULL,
+                triggered_by INT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             ) ENGINE=InnoDB
         """)
 
@@ -106,10 +140,11 @@ def ensure_os_tracking_schema(connection):
         cursor.close()
 
 
-def sync_os_deadlock_from_sharesync (connection):
+def sync_os_deadlock_from_sharesync(connection):
     """
     Synchronize ShareSync items and pending requests with the OS model.
-    Ownership always mirrors the real ACTIVE transactions.
+    Ownership always mirrors the real ACTIVE transactions, so returning an
+    item (or recovery) immediately frees it in the model.
     """
     ensure_os_tracking_schema(connection)
     cursor = connection.cursor(dictionary=True)
@@ -159,7 +194,7 @@ def sync_os_deadlock_from_sharesync (connection):
                 "active_transaction_id": None,
             })
 
-        # Active loans normally assign the OS-model resource to the borrower.
+        # Active loans assign the OS-model resource to the borrower.
         for transaction in active_transactions:
             key = key_by_offer_id.get(int(transaction["offer_id"]))
             if key is None:
@@ -173,8 +208,7 @@ def sync_os_deadlock_from_sharesync (connection):
                 transaction["transaction_id"]
             )
 
-        # Recovery now ends the victim's real loan, so the old simulated
-        # release overrides are obsolete. Clear any legacy rows.
+        # Clear legacy simulated-release rows (recovery is real now).
         cursor.execute("DELETE FROM os_recovery_releases")
 
         # Rebuild waits and remove obsolete simulation-only rows.
@@ -271,7 +305,7 @@ def sync_os_deadlock_from_sharesync (connection):
         cursor.close()
 
 
-def _load_state (connection) -> dict[str, Any]:
+def _load_state(connection) -> dict[str, Any]:
     """Read resources, waits, and the wait-for graph."""
     cursor = connection.cursor(dictionary=True)
 
@@ -383,7 +417,7 @@ def _load_state (connection) -> dict[str, Any]:
         cursor.close()
 
 
-def _find_cycle (graph: dict[int, list[int]]) -> list[int]:
+def _find_cycle(graph: dict[int, list[int]]) -> list[int]:
     """Return one cycle in the wait-for graph, or an empty list."""
     visited = set()
     active = set()
@@ -423,12 +457,23 @@ def _graph_output(graph):
     }
 
 
+def _names_output(state):
+    return {str(student): name for student, name in state["names"].items()}
+
+
+def _cycle_text(state, cycle):
+    return " → ".join(
+        state["names"].get(student, f"Student {student}")
+        for student in cycle
+    )
+
+
 def _find_current_deadlock(connection):
     state = _load_state(connection)
     return state, _find_cycle(state["graph"])
 
 
-def _acquire_lock (connection, timeout=10):
+def _acquire_lock(connection, timeout=10):
     cursor = connection.cursor()
     try:
         cursor.execute("SELECT GET_LOCK(%s, %s)", (_LOCK_NAME, timeout))
@@ -448,7 +493,69 @@ def _release_lock(connection):
         pass
 
 
-def detect_os_deadlock (connection) -> dict[str, Any]:
+def _log_detection(connection, state, cycle, requested_by):
+    """Record a detected deadlock (skips an identical repeat detection)."""
+    cursor = connection.cursor(dictionary=True)
+    try:
+        text = _cycle_text(state, cycle)[:255]
+        cursor.execute("""
+            SELECT event_type, cycle_text
+            FROM os_deadlock_history
+            ORDER BY history_id DESC
+            LIMIT 1
+        """)
+        latest = cursor.fetchone()
+        if (
+            latest
+            and latest["event_type"] == "DETECTED"
+            and latest["cycle_text"] == text
+        ):
+            return
+
+        cursor.execute("""
+            INSERT INTO os_deadlock_history
+                (event_type, cycle_text, triggered_by)
+            VALUES ('DETECTED', %s, %s)
+        """, (text, requested_by))
+        connection.commit()
+    except Exception:
+        # History must never break detection.
+        connection.rollback()
+    finally:
+        cursor.close()
+
+
+def get_os_deadlock_history(connection, limit=20) -> dict[str, Any]:
+    """Return the most recent deadlock detections and recoveries."""
+    ensure_os_tracking_schema(connection)
+    limit = max(1, min(int(limit), 100))
+    cursor = connection.cursor(dictionary=True)
+    try:
+        cursor.execute("""
+            SELECT history_id, event_type, cycle_text, policy,
+                   victim_student_id, victim_name, cancelled_request_ids,
+                   item_name, reallocated_to_name, new_transaction_id,
+                   triggered_by, created_at
+            FROM os_deadlock_history
+            ORDER BY history_id DESC
+            LIMIT %s
+        """, (limit,))
+        rows = cursor.fetchall()
+    finally:
+        cursor.close()
+
+    history = []
+    for row in rows:
+        entry = dict(row)
+        entry["created_at"] = str(entry["created_at"])
+        if entry.get("policy") in VICTIM_POLICIES:
+            entry["policy_label"] = VICTIM_POLICIES[entry["policy"]]
+        history.append(entry)
+
+    return {"success": True, "history": history}
+
+
+def detect_os_deadlock(connection, requested_by=None) -> dict[str, Any]:
     """Synchronize ShareSync state, then detect deadlocks."""
     if not _acquire_lock(connection):
         return {
@@ -459,6 +566,8 @@ def detect_os_deadlock (connection) -> dict[str, Any]:
     try:
         sync_os_deadlock_from_sharesync(connection)
         state, cycle = _find_current_deadlock(connection)
+        if cycle:
+            _log_detection(connection, state, cycle, requested_by)
     finally:
         _release_lock(connection)
 
@@ -469,13 +578,14 @@ def detect_os_deadlock (connection) -> dict[str, Any]:
             "resource_offers, transactions, student_resource_requests"
         ),
         "tracking_tables": "os_resources, os_resource_waits",
-        # Only the OS tracking tables are refreshed by detection.
+        # Only the OS tracking tables (and the history log) are refreshed.
         "database_records_changed": True,
         "application_records_changed": False,
         "resources": state["resources"],
         "initial_allocation": state["resources"],
         "waits": state["waits"],
         "wait_for_graph": _graph_output(state["graph"]),
+        "student_names": _names_output(state),
         "deadlock_detected": bool(cycle),
         "cycle": [str(student) for student in cycle],
         "cycle_names": [
@@ -491,13 +601,13 @@ def detect_os_deadlock (connection) -> dict[str, Any]:
     }
 
 
-def _pick_victim (state, cycle):
+def _pick_victim(state, cycle, policy=DEFAULT_POLICY):
     """
-    Victim policy (minimum cost): the cycle member holding the fewest
-    resources; ties go to the member with the newest waiting request.
+    Choose the victim of a cycle according to the selected policy.
     The victim must have a waiting request and hold a loan that another
     cycle member is waiting for.
     """
+    policy = normalize_policy(policy)
     members = set(cycle[:-1])
     held = {}
     for resource in state["resources"]:
@@ -533,16 +643,32 @@ def _pick_victim (state, cycle):
         if resource is None:
             continue
 
-        candidates.append((
-            held.get(member, 0), -own_wait["request_id"],
-            member, own_wait, resource,
-        ))
+        candidates.append({
+            "member": member,
+            "held": held.get(member, 0),
+            "request_id": own_wait["request_id"],
+            "wait": own_wait,
+            "resource": resource,
+        })
 
     if not candidates:
         return None
 
-    candidates.sort(key=lambda c: (c[0], c[1]))
-    _, _, victim_id, wait, resource = candidates[0]
+    if policy == "random":
+        chosen = random.choice(candidates)
+    else:
+        sort_keys = {
+            "fewest_held": lambda c: (c["held"], -c["request_id"]),
+            "newest_request": lambda c: (-c["request_id"],),
+            "lowest_id": lambda c: (c["member"],),
+            "highest_id": lambda c: (-c["member"],),
+        }
+        chosen = sorted(candidates, key=sort_keys[policy])[0]
+
+    victim_id = chosen["member"]
+    wait = chosen["wait"]
+    resource = chosen["resource"]
+
     # The cycle member waiting for the victim's resource will receive it.
     waiter_wait = next(
         (w for w in state["waits"]
@@ -556,11 +682,13 @@ def _pick_victim (state, cycle):
     return victim_id, wait, resource, waiter_wait
 
 
-def _recover_one (connection, state, cycle):
+def _recover_one(connection, state, cycle, policy=DEFAULT_POLICY,
+                 requested_by=None):
     """Break one cycle: abort the victim's waiting request, preempt the
     victim's loan, and reallocate the freed item to the cycle member that
     was waiting for it (a new ACTIVE transaction with the same lender)."""
-    picked = _pick_victim(state, cycle)
+    policy = normalize_policy(policy)
+    picked = _pick_victim(state, cycle, policy)
     if picked is None:
         return {
             "success": False,
@@ -757,6 +885,28 @@ def _recover_one (connection, state, cycle):
                 "message": "The item could not be reallocated.",
             }
 
+        victim_name = state["names"].get(victim_id, f"Student {victim_id}")
+        waiter_name = state["names"].get(waiter_id, f"Student {waiter_id}")
+
+        # Audit log, written in the same transaction as the recovery.
+        cursor.execute("""
+            INSERT INTO os_deadlock_history
+                (event_type, cycle_text, policy, victim_student_id,
+                 victim_name, cancelled_request_ids, item_name,
+                 reallocated_to_name, new_transaction_id, triggered_by)
+            VALUES ('RECOVERED', %s, %s, %s, %s, %s, %s, %s, %s, %s)
+        """, (
+            _cycle_text(state, cycle)[:255],
+            policy,
+            victim_id,
+            victim_name,
+            ", ".join(str(r) for r in to_cancel)[:255],
+            resource["label"],
+            waiter_name,
+            int(new_transaction_id),
+            requested_by,
+        ))
+
         connection.commit()
     except Exception:
         connection.rollback()
@@ -773,16 +923,16 @@ def _recover_one (connection, state, cycle):
                 pass
         cursor.close()
 
-    waiter_name = state["names"].get(waiter_id, f"Student {waiter_id}")
     return {
         "success": True,
+        "policy": policy,
+        "policy_label": VICTIM_POLICIES[policy],
         "method": (
             "Abort the victim's waiting request, preempt the victim's "
-            "loan, and reallocate the item to the waiting student "
-            "(minimum-cost victim)"
+            "loan, and reallocate the item to the waiting student"
         ),
         "victim_student_id": victim_id,
-        "victim_name": state["names"].get(victim_id, f"Student {victim_id}"),
+        "victim_name": victim_name,
         "cancelled_request_id": to_cancel[0],
         "cancelled_request_ids": to_cancel,
         "reallocated_to_student_id": waiter_id,
@@ -810,13 +960,17 @@ def _recover_one (connection, state, cycle):
     }
 
 
-def recover_os_deadlock (connection, requested_by=None) -> dict[str, Any]:
+def recover_os_deadlock(connection, requested_by=None,
+                        policy=None) -> dict[str, Any]:
     """
-    Recover from deadlock: repeatedly pick a victim from a cycle, abort its
-    waiting request, preempt its blocking loan and reallocate the item to
-    the waiting student, then re-run detection until no cycle remains.
-    Real ShareSync records are updated.
+    Recover from deadlock: repeatedly pick a victim from a cycle (using the
+    selected policy), abort its waiting request, preempt its blocking loan
+    and reallocate the item to the waiting student, then re-run detection
+    until no cycle remains. Real ShareSync records are updated and every
+    recovery is written to the history log.
     """
+    policy = normalize_policy(policy)
+
     if not _acquire_lock(connection):
         return {
             "success": False,
@@ -834,6 +988,9 @@ def recover_os_deadlock (connection, requested_by=None) -> dict[str, Any]:
                 "database_records_changed": False,
                 "application_records_changed": False,
                 "message": "No deadlock exists now. Nothing was changed.",
+                "policy": policy,
+                "policy_label": VICTIM_POLICIES[policy],
+                "student_names": _names_output(initial_state),
                 "resources": initial_state["resources"],
                 "resource_state_after_recovery": initial_state["resources"],
                 "wait_for_graph": _graph_output(initial_state["graph"]),
@@ -867,7 +1024,9 @@ def recover_os_deadlock (connection, requested_by=None) -> dict[str, Any]:
                 )
                 break
 
-            result = _recover_one(connection, state, cycle)
+            result = _recover_one(
+                connection, state, cycle, policy, requested_by
+            )
             if not result["success"]:
                 result["recoveries"] = recoveries
                 return result
@@ -887,12 +1046,17 @@ def recover_os_deadlock (connection, requested_by=None) -> dict[str, Any]:
         _release_lock(connection)
 
     remains = bool(cycle)
+    names = _names_output(initial_state)
+    names.update(_names_output(state))
     return {
         "success": True,
         "mode": "Victim abort + preemption + reallocation",
+        "policy": policy,
+        "policy_label": VICTIM_POLICIES[policy],
         "database_records_changed": True,
         "application_records_changed": True,
         "deadlock_detected": True,
+        "student_names": names,
         "resources": initial_state["resources"],
         "initial_allocation": initial_state["resources"],
         "waits": initial_state["waits"],
