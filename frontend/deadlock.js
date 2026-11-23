@@ -168,7 +168,6 @@
 
         container.replaceChildren();
 
-        // Collect nodes and unique edges (several items may share a pair).
         const nodeIds = new Set(Object.keys(graph));
         const edgeMap = new Map();
 
