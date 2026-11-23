@@ -261,7 +261,6 @@
             const length = Math.hypot(dx, dy) || 1;
             const curve = hasReverse ? 38 : 0;
 
-            // Control point offset perpendicular to the straight line.
             const control = {
                 x: (a.x + b.x) / 2 + (-dy / length) * curve,
                 y: (a.y + b.y) / 2 + (dx / length) * curve
