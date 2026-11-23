@@ -8,8 +8,6 @@ _LOCK_NAME = "sharesync_os_deadlock"
 
 _MAX_RECOVERY_ROUNDS = 20
 
-# If True, only a student who is part of the deadlock cycle may run recovery.
-# Left False so any logged-in student can demonstrate the feature.
 RESTRICT_RECOVERY_TO_PARTICIPANTS = False
 
 # Victim selection policies offered in the UI (key -> label).
