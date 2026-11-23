@@ -96,7 +96,6 @@ def ensure_os_tracking_schema(connection):
             ) ENGINE=InnoDB
         """)
 
-        # Migrate older OS tracking tables.
         for column, definition in (
             ("sharer_id", "INT NULL"),
             ("share_item_key", "VARCHAR(300) NULL"),
