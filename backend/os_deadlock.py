@@ -4,11 +4,8 @@ import random
 from datetime import date, timedelta
 from typing import Any
 
-
-# students clicking at the same time cannot rebuild the OS tables together.
 _LOCK_NAME = "sharesync_os_deadlock"
 
-# Safety limit for the "recover until no cycle remains" loop.
 _MAX_RECOVERY_ROUNDS = 20
 
 # If True, only a student who is part of the deadlock cycle may run recovery.
