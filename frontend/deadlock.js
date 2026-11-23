@@ -250,7 +250,6 @@
         );
         svg.appendChild(defs);
 
-        // Edges first, so nodes are painted on top of them.
         edgeMap.forEach((edge, key) => {
             const a = position.get(edge.from);
             const b = position.get(edge.to);
