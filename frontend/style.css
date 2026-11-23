@@ -1646,6 +1646,53 @@ body {
     color: #ffd0d0;
 }
 
+.deadlock-status {
+    margin: 0;
+    padding: 13px 15px;
+    border: 1px solid #454545;
+    border-radius: 8px;
+    background: #1b1b1b;
+    color: #d6d6d6;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.deadlock-status.is-success {
+    border-color: #386a49;
+    background: #14271a;
+    color: #a9edbc;
+}
+
+.deadlock-status.is-error {
+    border-color: #794747;
+    background: #2a1919;
+    color: #ffd0d0;
+}
+
+.deadlock-results {
+    margin-top: 18px;
+}
+
+.deadlock-results h3 {
+    margin: 0 0 8px;
+    color: #f1e9e9;
+    font-size: 15px;
+}
+
+.deadlock-results p {
+    margin: 0;
+    color: #c2babc;
+    font-size: 14px;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+}
+
+.deadlock-results .deadlock-cycle {
+    margin-top: 8px;
+    color: #f1a6a6;
+    font-weight: 700;
+}
+
 .deadlock-stats {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));

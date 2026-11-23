@@ -9,18 +9,16 @@ import mysql.connector
 
 student_request_lock = Lock()
 
-#Establishing connection with the database using connector
 def get_db_connection():
     return mysql.connector.connect (
         host=os.getenv("MYSQL_HOST"),
         user=os.getenv("MYSQL_USER"),
-        port=os.getenv("MYSQL_PORT"),
+        port=int(os.getenv("MYSQL_PORT") or 3306),
         password=os.getenv("MYSQL_PASSWORD"),
         database=os.getenv("MYSQL_DATABASE"),
         connection_timeout=10
     )
 
-#database cursor creation for retrieval and sending of queries 
 def get_db_cursor(connection):
     return connection.cursor(dictionary=True)
 
@@ -146,5 +144,5 @@ def ensure_student_dashboard_tables(connection):
             ADD COLUMN share_item_key VARCHAR(300) NULL
         ''')
     connection.commit()
-    #closing cursor 
+   
     cursor.close()
