@@ -185,7 +185,6 @@ def sync_os_deadlock_from_sharesync(connection):
                 "active_transaction_id": None,
             })
 
-        # Active loans assign the OS-model resource to the borrower.
         for transaction in active_transactions:
             key = key_by_offer_id.get(int(transaction["offer_id"]))
             if key is None:
