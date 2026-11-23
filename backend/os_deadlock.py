@@ -4,18 +4,12 @@ import random
 from datetime import date, timedelta
 from typing import Any
 
-# Name of the MySQL advisory lock that serialises detection/recovery so two
-# students clicking at the same time cannot rebuild the OS tables together.
 _LOCK_NAME = "sharesync_os_deadlock"
 
-# Safety limit for the "recover until no cycle remains" loop.
 _MAX_RECOVERY_ROUNDS = 20
 
-# If True, only a student who is part of the deadlock cycle may run recovery.
-# Left False so any logged-in student can demonstrate the feature.
 RESTRICT_RECOVERY_TO_PARTICIPANTS = False
 
-# Victim selection policies offered in the UI (key -> label).
 VICTIM_POLICIES = {
     "fewest_held": "Fewest held items (minimum cost)",
     "newest_request": "Newest waiting request",
@@ -75,7 +69,6 @@ def ensure_os_tracking_schema(connection):
             ) ENGINE=InnoDB
         """)
 
-        # Legacy table (no longer used by recovery, kept for old databases).
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS os_recovery_releases (
                 sharer_id INT NOT NULL,
@@ -86,7 +79,6 @@ def ensure_os_tracking_schema(connection):
             ) ENGINE=InnoDB
         """)
 
-        # Audit log of every detected deadlock and every recovery.
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS os_deadlock_history (
                 history_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -104,7 +96,6 @@ def ensure_os_tracking_schema(connection):
             ) ENGINE=InnoDB
         """)
 
-        # Migrate older OS tracking tables.
         for column, definition in (
             ("sharer_id", "INT NULL"),
             ("share_item_key", "VARCHAR(300) NULL"),
@@ -194,7 +185,6 @@ def sync_os_deadlock_from_sharesync(connection):
                 "active_transaction_id": None,
             })
 
-        # Active loans assign the OS-model resource to the borrower.
         for transaction in active_transactions:
             key = key_by_offer_id.get(int(transaction["offer_id"]))
             if key is None:
@@ -208,10 +198,8 @@ def sync_os_deadlock_from_sharesync(connection):
                 transaction["transaction_id"]
             )
 
-        # Clear legacy simulated-release rows (recovery is real now).
         cursor.execute("DELETE FROM os_recovery_releases")
 
-        # Rebuild waits and remove obsolete simulation-only rows.
         cursor.execute("DELETE FROM os_resource_waits")
         cursor.execute("""
             DELETE FROM os_resources
@@ -266,7 +254,6 @@ def sync_os_deadlock_from_sharesync(connection):
                 _normalize(resource["resource_name"]), []
             ).append(resource)
 
-        # A request waits only if matching items exist and all are allocated.
         for req in open_requests:
             requester_id = int(req["student_id"])
             matches = by_name.get(_normalize(req["resource_name"]), [])
@@ -578,7 +565,7 @@ def detect_os_deadlock(connection, requested_by=None) -> dict[str, Any]:
             "resource_offers, transactions, student_resource_requests"
         ),
         "tracking_tables": "os_resources, os_resource_waits",
-        # Only the OS tracking tables (and the history log) are refreshed.
+  
         "database_records_changed": True,
         "application_records_changed": False,
         "resources": state["resources"],
@@ -730,8 +717,6 @@ def _recover_one(connection, state, cycle, policy=DEFAULT_POLICY,
                 ),
             }
 
-        # Cancel every OPEN request of the victim for the blocked item
-        # (a wait row stores only one request id per item).
         cursor.execute("""
             SELECT request_id, resource_name
             FROM student_resource_requests
@@ -763,8 +748,7 @@ def _recover_one(connection, state, cycle, policy=DEFAULT_POLICY,
               AND request_status = 'OPEN'
         """, (*to_cancel, victim_id))
 
-        # Resource preemption: end the victim's loan first, so the lender
-        # has no other ACTIVE loan of this item.
+
         cursor.execute("""
             UPDATE transactions
             SET transaction_status = 'RETURNED',
@@ -780,7 +764,6 @@ def _recover_one(connection, state, cycle, policy=DEFAULT_POLICY,
                 "message": "The victim's loan could not be released.",
             }
 
-        # Reallocation: give the freed item to the waiting cycle member.
         cursor.execute("""
             SELECT request_id, student_id, resource_name, description,
                    category, due_date
@@ -888,7 +871,6 @@ def _recover_one(connection, state, cycle, policy=DEFAULT_POLICY,
         victim_name = state["names"].get(victim_id, f"Student {victim_id}")
         waiter_name = state["names"].get(waiter_id, f"Student {waiter_id}")
 
-        # Audit log, written in the same transaction as the recovery.
         cursor.execute("""
             INSERT INTO os_deadlock_history
                 (event_type, cycle_text, policy, victim_student_id,
