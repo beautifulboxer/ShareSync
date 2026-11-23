@@ -539,9 +539,7 @@
         setMessage(data.message || "Recovery result displayed.", "success");
     }
 
-    // ---------------------------------------------------------------
-    // Deadlock history log
-    // ---------------------------------------------------------------
+
     function renderHistory(entries = []) {
         const container = document.getElementById("deadlockHistory");
         if (!container) return;
