@@ -200,7 +200,6 @@ def sync_os_deadlock_from_sharesync(connection):
 
         cursor.execute("DELETE FROM os_recovery_releases")
 
-        # Rebuild waits and remove obsolete simulation-only rows.
         cursor.execute("DELETE FROM os_resource_waits")
         cursor.execute("""
             DELETE FROM os_resources
