@@ -2,7 +2,6 @@
     const detectBtn = document.getElementById("detectDeadlockBtn");
     const recoverBtn = document.getElementById("recoverDeadlockBtn");
 
-    // Do nothing if this script is loaded on another page.
     if (!detectBtn || !recoverBtn) return;
 
     const message = document.getElementById("deadlockMessage");
