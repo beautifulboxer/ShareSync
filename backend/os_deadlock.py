@@ -79,7 +79,6 @@ def ensure_os_tracking_schema(connection):
             ) ENGINE=InnoDB
         """)
 
-        # Audit log of every detected deadlock and every recovery.
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS os_deadlock_history (
                 history_id INT AUTO_INCREMENT PRIMARY KEY,
