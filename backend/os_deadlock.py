@@ -198,7 +198,6 @@ def sync_os_deadlock_from_sharesync(connection):
                 transaction["transaction_id"]
             )
 
-        # Clear legacy simulated-release rows (recovery is real now).
         cursor.execute("DELETE FROM os_recovery_releases")
 
         # Rebuild waits and remove obsolete simulation-only rows.
