@@ -4,7 +4,7 @@ import random
 from datetime import date, timedelta
 from typing import Any
 
-# Name of the MySQL advisory lock that serialises detection/recovery so two
+
 # students clicking at the same time cannot rebuild the OS tables together.
 _LOCK_NAME = "sharesync_os_deadlock"
 
