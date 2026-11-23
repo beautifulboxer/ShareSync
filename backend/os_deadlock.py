@@ -10,7 +10,6 @@ _MAX_RECOVERY_ROUNDS = 20
 
 RESTRICT_RECOVERY_TO_PARTICIPANTS = False
 
-# Victim selection policies offered in the UI (key -> label).
 VICTIM_POLICIES = {
     "fewest_held": "Fewest held items (minimum cost)",
     "newest_request": "Newest waiting request",
@@ -70,7 +69,6 @@ def ensure_os_tracking_schema(connection):
             ) ENGINE=InnoDB
         """)
 
-        # Legacy table (no longer used by recovery, kept for old databases).
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS os_recovery_releases (
                 sharer_id INT NOT NULL,
