@@ -254,7 +254,6 @@ def sync_os_deadlock_from_sharesync(connection):
                 _normalize(resource["resource_name"]), []
             ).append(resource)
 
-        # A request waits only if matching items exist and all are allocated.
         for req in open_requests:
             requester_id = int(req["student_id"])
             matches = by_name.get(_normalize(req["resource_name"]), [])
@@ -566,7 +565,7 @@ def detect_os_deadlock(connection, requested_by=None) -> dict[str, Any]:
             "resource_offers, transactions, student_resource_requests"
         ),
         "tracking_tables": "os_resources, os_resource_waits",
-        # Only the OS tracking tables (and the history log) are refreshed.
+  
         "database_records_changed": True,
         "application_records_changed": False,
         "resources": state["resources"],
@@ -718,8 +717,6 @@ def _recover_one(connection, state, cycle, policy=DEFAULT_POLICY,
                 ),
             }
 
-        # Cancel every OPEN request of the victim for the blocked item
-        # (a wait row stores only one request id per item).
         cursor.execute("""
             SELECT request_id, resource_name
             FROM student_resource_requests
@@ -751,8 +748,7 @@ def _recover_one(connection, state, cycle, policy=DEFAULT_POLICY,
               AND request_status = 'OPEN'
         """, (*to_cancel, victim_id))
 
-        # Resource preemption: end the victim's loan first, so the lender
-        # has no other ACTIVE loan of this item.
+
         cursor.execute("""
             UPDATE transactions
             SET transaction_status = 'RETURNED',
