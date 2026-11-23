@@ -764,7 +764,6 @@ def _recover_one(connection, state, cycle, policy=DEFAULT_POLICY,
                 "message": "The victim's loan could not be released.",
             }
 
-        # Reallocation: give the freed item to the waiting cycle member.
         cursor.execute("""
             SELECT request_id, student_id, resource_name, description,
                    category, due_date
