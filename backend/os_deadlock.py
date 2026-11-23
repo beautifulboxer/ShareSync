@@ -871,7 +871,6 @@ def _recover_one(connection, state, cycle, policy=DEFAULT_POLICY,
         victim_name = state["names"].get(victim_id, f"Student {victim_id}")
         waiter_name = state["names"].get(waiter_id, f"Student {waiter_id}")
 
-        # Audit log, written in the same transaction as the recovery.
         cursor.execute("""
             INSERT INTO os_deadlock_history
                 (event_type, cycle_text, policy, victim_student_id,
