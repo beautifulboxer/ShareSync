@@ -672,8 +672,7 @@
         setMessage("Rechecking the current graph and recovering if a cycle remains…");
 
         try {
-            // Recovery is a separate POST operation. The backend rechecks
-            // the current database state before changing anything.
+
             const policy = policySelect ? policySelect.value : "fewest_held";
             const data = await requestJson(
                 "/api/student-dashboard/os-deadlock/recover",
