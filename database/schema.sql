@@ -236,3 +236,33 @@ CREATE TABLE IF NOT EXISTS transaction_reviews(
     UNIQUE KEY uq_review_once (transaction_id, reviewer_id)
 ) ENGINE=InnoDB;
 
+DELIMITER //
+DROP PROCEDURE IF EXISTS review_student_registration//
+CREATE PROCEDURE review_student_registration(
+    IN stu_id INT,
+    IN t_action VARCHAR(10),
+    OUT updated_rows INT
+)
+BEGIN
+    DECLARE new_status VARCHAR(30);
+
+    IF t_action IS NULL OR LOWER(t_action) NOT IN ('approve', 'reject') THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'Action must be approve or reject';
+    END IF;
+
+    SET new_status = CASE LOWER(t_action)
+        WHEN 'approve' THEN 'VERIFIED'
+        WHEN 'reject' THEN 'REJECTED'
+    END;
+
+    UPDATE students
+    SET verification_status = new_status
+    WHERE student_id = stu_id
+      AND role = 'STUDENT'
+      AND verification_status = 'PENDING';
+
+    SET updated_rows = ROW_COUNT();
+END//
+DELIMITER ;
+

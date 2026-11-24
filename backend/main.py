@@ -160,22 +160,17 @@ def admin_review_student():
     if action not in ['approve', 'reject']:
         return jsonify({'success': False, 'message': 'Invalid action.'}), 400
 
-    new_status = 'VERIFIED' if action == 'approve' else 'REJECTED'
     connection = None
     cursor = None
     try:
         connection = get_db_connection()
         cursor = connection.cursor()
-        cursor.execute(
-            '''
-            UPDATE students
-            SET verification_status = %s
-            WHERE student_id = %s AND role = 'STUDENT' AND verification_status = 'PENDING'
-            ''',
-            (new_status, student_id)
+        result = cursor.callproc(
+            'review_student_registration',
+            (student_id, action, 0)
         )
 
-        if cursor.rowcount == 0:
+        if int(result[2] or 0) == 0:
             connection.rollback()
             return jsonify({'success': False, 'message': 'Student not found or already reviewed.'}), 404
 
