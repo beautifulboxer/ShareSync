@@ -218,6 +218,20 @@ CREATE TABLE IF NOT EXISTS os_recovery_releases (
     PRIMARY KEY (sharer_id, share_item_key)
 ) ENGINE=InnoDB;
 
+CREATE TABLE IF NOT EXISTS os_deadlock_history (
+    history_id INT AUTO_INCREMENT PRIMARY KEY,
+    event_type VARCHAR(20) NOT NULL,
+    cycle_text VARCHAR(255) NULL,
+    policy VARCHAR(30) NULL,
+    victim_student_id INT NULL,
+    victim_name VARCHAR(100) NULL,
+    cancelled_request_ids VARCHAR(255) NULL,
+    item_name VARCHAR(150) NULL,
+    reallocated_to_name VARCHAR(100) NULL,
+    new_transaction_id INT NULL,
+    triggered_by INT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS transaction_fees (
     transaction_id INT PRIMARY KEY,
