@@ -180,6 +180,7 @@ CREATE TABLE IF NOT EXISTS os_resources (
     UNIQUE KEY uq_os_resource_source (sharer_id, share_item_key)
 ) ENGINE=InnoDB;
 
+--shows which resources are involed waiting for other resources 
 CREATE TABLE IF NOT EXISTS os_resource_waits (
     wait_id INT AUTO_INCREMENT PRIMARY KEY,
     waiting_student_id INT NOT NULL,
