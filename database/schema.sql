@@ -70,6 +70,7 @@ CREATE TABLE IF NOT EXISTS resource_offers (
         ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
+--Transaction for when the requester confirms offer
 CREATE TABLE IF NOT EXISTS transactions (
     transaction_id INT AUTO_INCREMENT PRIMARY KEY,
     request_id INT NOT NULL,
@@ -93,6 +94,7 @@ CREATE TABLE IF NOT EXISTS transactions (
         FOREIGN KEY (lender_id)
         REFERENCES students(student_id)
 ) ENGINE=InnoDB;
+
 
 CREATE TABLE IF NOT EXISTS fines (
     fine_id INT AUTO_INCREMENT PRIMARY KEY,
