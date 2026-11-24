@@ -227,3 +227,14 @@ CREATE TABLE IF NOT EXISTS transaction_fees (
 
 ) ENGINE=InnoDB;
 
+CREATE TABLE IF NOT EXISTS transaction_reviews(
+    review_id INT AUTO_INCREMENT PRIMARY KEY,
+    transaction_id INT NOT NULL,
+    reviewer_id INT NOT NULL,
+    reviewee_id INT NOT NULL,
+    rating TINYINT NOT NULL,
+    comment VARCHAR(500) NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY uq_review_once (transaction_id, reviewer_id)
+) ENGINE=InnoDB;
+
