@@ -217,3 +217,13 @@ CREATE TABLE IF NOT EXISTS os_recovery_releases (
     recovered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (sharer_id, share_item_key)
 ) ENGINE=InnoDB;
+
+
+CREATE TABLE IF NOT EXISTS transaction_fees (
+    transaction_id INT PRIMARY KEY,
+    late_days INT NOT NULL,
+    fee_amount INT NOT NULL,
+    computed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+
+) ENGINE=InnoDB;
+
