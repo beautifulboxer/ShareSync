@@ -37,39 +37,26 @@ SELECT student_id, student_name, email, role, verification_status, created_at
 FROM students
 ORDER BY created_at DESC;
 
--- View resources and the student who shared each one.
-SELECT r.resource_id, r.resource_name, r.description, r.category,
-       r.created_at, s.student_id, s.student_name
-FROM student_resources AS r
-JOIN students AS s ON s.student_id = r.student_id
-ORDER BY r.created_at DESC;
-
--- View borrow requests, the requesting student, and (when linked) the
--- owner of the requested resource. Resource names are also kept on the
--- request row, so this still shows requests without a linked resource.
-
+-- View board requests, the requester, and the student who offered to share.
 SELECT q.request_id, q.resource_name, q.description, q.category,
        q.request_status, q.due_date, q.created_at,
        borrower.student_id AS borrower_id,
        borrower.student_name AS borrower_name,
-       owner.student_id AS resource_owner_id,
-       owner.student_name AS resource_owner_name
+       sharer.student_id AS sharer_id,
+       sharer.student_name AS sharer_name
 FROM student_resource_requests AS q
 JOIN students AS borrower ON borrower.student_id = q.student_id
-LEFT JOIN student_resources AS r ON r.resource_id = q.resource_id
-LEFT JOIN students AS owner ON owner.student_id = r.student_id
+LEFT JOIN students AS sharer ON sharer.student_id = q.accepted_by
 ORDER BY q.created_at DESC;
 
--- View requests for resources owned by one student.
--- Replace 101 with the resource owner's student_id.
-
+-- View requests accepted by one student.
+-- Replace 101 with the student's student_id.
 SELECT q.request_id, q.resource_name, q.description, q.category,
        q.request_status, q.created_at, requester.student_id,
        requester.student_name AS requester_name
 FROM student_resource_requests AS q
-JOIN student_resources AS r ON r.resource_id = q.resource_id
 JOIN students AS requester ON requester.student_id = q.student_id
-WHERE r.student_id = 101
+WHERE q.accepted_by = 101
 ORDER BY q.created_at DESC;
 
 -- View the share offer and active transaction created by acceptance.
