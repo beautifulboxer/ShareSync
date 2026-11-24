@@ -163,6 +163,7 @@ CREATE TABLE IF NOT EXISTS student_share_item_locks (
         ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
+--os resources table for showing resources in the os 
 CREATE TABLE IF NOT EXISTS os_resources (
     resource_id INT AUTO_INCREMENT PRIMARY KEY,
     resource_name VARCHAR(150) NOT NULL,
