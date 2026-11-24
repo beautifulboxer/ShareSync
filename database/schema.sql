@@ -236,6 +236,10 @@ CREATE TABLE IF NOT EXISTS transaction_reviews(
     UNIQUE KEY uq_review_once (transaction_id, reviewer_id)
 ) ENGINE=InnoDB;
 
+
+
+--PROCEDURE FOR FOLLOWING REGISTRATION OF STUDENTS
+--WILL CHANGE STATUS OF PENDING STUDENTS
 DELIMITER //
 DROP PROCEDURE IF EXISTS review_student_registration//
 CREATE PROCEDURE review_student_registration(
