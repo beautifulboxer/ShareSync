@@ -202,7 +202,7 @@ CREATE TABLE IF NOT EXISTS os_recovery_releases (
     recovered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (sharer_id, share_item_key)
 ) ENGINE=InnoDB;
-
+--table created to show previous deadlocks that were recovered or detected 
 CREATE TABLE IF NOT EXISTS os_deadlock_history (
     history_id INT AUTO_INCREMENT PRIMARY KEY,
     event_type VARCHAR(20) NOT NULL,
