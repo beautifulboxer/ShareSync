@@ -84,22 +84,9 @@ def ensure_student_dashboard_tables(connection):
         ) ENGINE=InnoDB
     ''')
     cursor.execute('''
-        CREATE TABLE IF NOT EXISTS student_resources (
-            resource_id INT AUTO_INCREMENT PRIMARY KEY,
-            student_id INT NOT NULL,
-            resource_name VARCHAR(150) NOT NULL,
-            description TEXT NOT NULL,
-            category VARCHAR(50) NOT NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            CONSTRAINT fk_student_resource_owner FOREIGN KEY (student_id)
-            REFERENCES students(student_id) ON DELETE CASCADE
-        )   ENGINE=InnoDB
-    ''')
-    cursor.execute('''
         CREATE TABLE IF NOT EXISTS student_resource_requests (
             request_id INT AUTO_INCREMENT PRIMARY KEY,
             student_id INT NOT NULL,
-            resource_id INT NULL,
             accepted_by INT NULL,
             resource_name VARCHAR(150) NOT NULL,
             description TEXT NOT NULL,
@@ -108,8 +95,6 @@ def ensure_student_dashboard_tables(connection):
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             CONSTRAINT fk_student_resource_requester FOREIGN KEY (student_id)
             REFERENCES students(student_id) ON DELETE CASCADE,
-            CONSTRAINT fk_student_resource_requested FOREIGN KEY (resource_id)
-            REFERENCES student_resources(resource_id) ON DELETE SET NULL,
             CONSTRAINT fk_student_request_acceptor FOREIGN KEY (accepted_by)
             REFERENCES students(student_id) ON DELETE SET NULL
         ) ENGINE=InnoDB

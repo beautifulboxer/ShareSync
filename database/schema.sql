@@ -131,22 +131,9 @@ CREATE TABLE IF NOT EXISTS reviews (
         ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
-CREATE TABLE IF NOT EXISTS student_resources (
-    resource_id INT AUTO_INCREMENT PRIMARY KEY,
-    student_id INT NOT NULL,
-    resource_name VARCHAR(150) NOT NULL,
-    description TEXT NOT NULL,
-    category VARCHAR(50) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT fk_student_resource_owner FOREIGN KEY (student_id)
-        REFERENCES students(student_id)
-        ON DELETE CASCADE
-) ENGINE=InnoDB;
-
 CREATE TABLE IF NOT EXISTS student_resource_requests (
     request_id INT AUTO_INCREMENT PRIMARY KEY,
     student_id INT NOT NULL,
-    resource_id INT NULL,
     accepted_by INT NULL,
     borrow_request_id INT NULL,
     resource_name VARCHAR(150) NOT NULL,
@@ -158,9 +145,6 @@ CREATE TABLE IF NOT EXISTS student_resource_requests (
     CONSTRAINT fk_student_resource_requester FOREIGN KEY (student_id)
         REFERENCES students(student_id)
         ON DELETE CASCADE,
-    CONSTRAINT fk_student_resource_requested FOREIGN KEY (resource_id)
-        REFERENCES student_resources(resource_id)
-        ON DELETE SET NULL,
     CONSTRAINT fk_student_request_acceptor FOREIGN KEY (accepted_by)
         REFERENCES students(student_id)
         ON DELETE SET NULL,
@@ -217,3 +201,38 @@ CREATE TABLE IF NOT EXISTS os_recovery_releases (
     recovered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (sharer_id, share_item_key)
 ) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS os_deadlock_history (
+    history_id INT AUTO_INCREMENT PRIMARY KEY,
+    event_type VARCHAR(20) NOT NULL,
+    cycle_text VARCHAR(255) NULL,
+    policy VARCHAR(30) NULL,
+    victim_student_id INT NULL,
+    victim_name VARCHAR(100) NULL,
+    cancelled_request_ids VARCHAR(255) NULL,
+    item_name VARCHAR(150) NULL,
+    reallocated_to_name VARCHAR(100) NULL,
+    new_transaction_id INT NULL,
+    triggered_by INT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS transaction_fees (
+    transaction_id INT PRIMARY KEY,
+    late_days INT NOT NULL,
+    fee_amount INT NOT NULL,
+    computed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS transaction_reviews(
+    review_id INT AUTO_INCREMENT PRIMARY KEY,
+    transaction_id INT NOT NULL,
+    reviewer_id INT NOT NULL,
+    reviewee_id INT NOT NULL,
+    rating TINYINT NOT NULL,
+    comment VARCHAR(500) NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY uq_review_once (transaction_id, reviewer_id)
+) ENGINE=InnoDB;
+

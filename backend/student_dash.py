@@ -471,8 +471,8 @@ def create_student_resource_request():
         cursor = get_db_cursor(connection)
         cursor.execute('''
             INSERT INTO student_resource_requests
-                (student_id, resource_id, resource_name, description, category, due_date)
-            VALUES (%s, NULL, %s, %s, %s, %s)
+                (student_id, resource_name, description, category, due_date)
+            VALUES (%s, %s, %s, %s, %s)
         ''', (
             session['student_id'],
             resource_name.strip(),
