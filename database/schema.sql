@@ -227,6 +227,7 @@ CREATE TABLE IF NOT EXISTS transaction_fees (
 
 ) ENGINE=InnoDB;
 
+--for the reviewing of transactions
 CREATE TABLE IF NOT EXISTS transaction_reviews(
     review_id INT AUTO_INCREMENT PRIMARY KEY,
     transaction_id INT NOT NULL,
