@@ -277,6 +277,10 @@ BEGIN
 END//
 DELIMITER ;
 
+
+
+--VIEWS WE HAVE IMPLEMENTED TO SHOW INFORMATION IN A CLEAN FORMAT 
+--AND FASTER FOR DEMONSTRATING 
 --view for viewing pending students 
 
 CREATE OR REPLACE VIEW view_pending_students AS
@@ -306,5 +310,7 @@ LEFT JOIN students acceptor
   
   select * from view_student_requests;
   
+
+
 
 
