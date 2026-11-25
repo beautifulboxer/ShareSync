@@ -277,3 +277,34 @@ BEGIN
 END//
 DELIMITER ;
 
+--view for viewing pending students 
+
+CREATE OR REPLACE VIEW view_pending_students AS
+SELECT student_id, student_name, email, created_at
+FROM students
+WHERE role = 'STUDENT'
+  AND verification_status = 'PENDING';
+
+  --View for viewing accepted students 
+CREATE OR REPLACE VIEW view_student_requests AS
+SELECT q.request_id,
+       q.resource_name,
+       q.category,
+       q.description,
+       q.request_status,
+       q.due_date,
+       q.created_at,
+       requester.student_id AS requester_id,
+       requester.student_name AS requester_name,
+       acceptor.student_id AS accepted_by_id,
+       acceptor.student_name AS accepted_by_name
+FROM student_resource_requests q
+JOIN students requester
+  ON requester.student_id = q.student_id
+LEFT JOIN students acceptor
+  ON acceptor.student_id = q.accepted_by;
+  
+  select * from view_student_requests;
+  
+
+
