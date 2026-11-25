@@ -281,6 +281,7 @@ DELIMITER ;
 
 --VIEWS WE HAVE IMPLEMENTED TO SHOW INFORMATION IN A CLEAN FORMAT 
 --AND FASTER FOR DEMONSTRATING 
+
 --view for viewing pending students 
 
 CREATE OR REPLACE VIEW view_pending_students AS
@@ -312,5 +313,27 @@ LEFT JOIN students acceptor
   
 
 
+--VIEW FOR SHOWING ACTIVE TRANSACTIONS FOR DASHBOARD 
 
+CREATE OR REPLACE VIEW view_active_transactions AS
+SELECT t.transaction_id,
+       t.request_id,
+       t.offer_id,
+       borrower.student_id AS borrower_id,
+       borrower.student_name AS borrower_name,
+       lender.student_id AS lender_id,
+       lender.student_name AS lender_name,
+       o.resource_name,
+       t.borrowed_at,
+       t.due_date,
+       t.transaction_status
+FROM transactions t
+JOIN students borrower
+  ON borrower.student_id = t.borrower_id
+JOIN students lender
+  ON lender.student_id = t.lender_id
+JOIN resource_offers o
+  ON o.offer_id = t.offer_id
+WHERE t.transaction_status = 'ACTIVE';
+select * from view_active_transactions;
 
